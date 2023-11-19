@@ -1,5 +1,6 @@
 import { SSTConfig } from 'sst';
 import { API } from './stacks/api';
+import { FeTemp } from './stacks/fe-temp';
 
 const esbuild = {
   target: 'node18',
@@ -19,5 +20,6 @@ export default {
   stacks(app) {
     app.setDefaultFunctionProps({ nodejs: { esbuild } });
     app.stack(API);
+    app.stack(FeTemp);
   },
 } satisfies SSTConfig;
