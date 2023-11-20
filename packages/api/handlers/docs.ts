@@ -1,5 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import { version } from '../../package.json';
+import { version } from '../../../package.json';
 import { usersDocs } from '../docs/users';
 import { createHandler } from '../helpers/handler.helper';
 
