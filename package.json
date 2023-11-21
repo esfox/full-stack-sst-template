@@ -7,7 +7,9 @@
   "license": "MIT",
   "scripts": {
     "sst": "sst",
-    "dev": "sst dev",
+    "dev": "concurrently 'npm run dev:sst' 'npm run dev:cms'",
+    "dev:sst": "sst dev",
+    "dev:cms": "npm --prefix packages/cms start",
     "build": "sst build",
     "build:dev": "sst build --stage dev",
     "build:staging": "sst build --stage staging",

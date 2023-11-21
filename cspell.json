@@ -1,7 +1,7 @@
 {
   "version": "0.2",
   "language": "en",
-  "words": ["tsbuildinfo", "kysely", "updateable", "pascalized"],
+  "words": ["tsbuildinfo", "kysely", "updateable", "pascalized", "devkit"],
   "ignorePaths": [
     "node_modules/",
     "build/",
