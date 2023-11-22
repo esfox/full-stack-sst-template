@@ -1,5 +1,14 @@
-<h1 class="text-3xl font-bold underline">Main Layout</h1>
-<main>
-  <ng-content />
-</main>
-<button class="btn btn-primary">Click Me</button>
+<div class="drawer md:drawer-open">
+  <input id="sidebar" type="checkbox" class="drawer-toggle" />
+  <main class="drawer-content">
+    <app-navbar />
+    <!-- <label for="sidebar" class="drawer-button">click</label> -->
+    <ng-content />
+  </main>
+  <div class="drawer-side z-50">
+    <label for="sidebar" aria-label="close sidebar" class="drawer-overlay"></label>
+    <aside class="w-64 h-full bg-base-100">
+      <app-sidebar />
+    </aside>
+  </div>
+</div>
