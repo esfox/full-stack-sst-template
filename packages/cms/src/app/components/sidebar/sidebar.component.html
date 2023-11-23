@@ -1,0 +1,16 @@
+<div class="h-16 grid place-items-center bg-primary">
+  <h1>CMS</h1>
+</div>
+<ul class="menu w-full p-0 [&_li>*]:rounded-none">
+  @for (item of menu; track item.route) {
+    <li>
+      <a
+        [routerLink]="[item.route]"
+        routerLinkActive="active"
+        class="p-3"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >{{ item.label }}</a
+      >
+    </li>
+  }
+</ul>
