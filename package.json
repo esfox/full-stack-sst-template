@@ -6,7 +6,8 @@
   "author": "osairis100@gmail.com",
   "license": "MIT",
   "scripts": {
-    "sst": "sst",
+    "i:api": "pnpm --prefix packages/api i",
+    "i:cms": "pnpm --prefix packages/cms i",
     "dev": "concurrently 'npm run dev:sst' 'npm run dev:cms'",
     "dev:sst": "sst dev",
     "dev:cms": "npm --prefix packages/cms start",
@@ -32,6 +33,7 @@
     "ci:lint": "pnpm recursive run lint:all",
     "pre-commit": "concurrently \"lint-staged --allow-empty\" \"pnpm lint:spell\"",
     "prepare": "husky install",
+    "sst": "sst",
     "cli": "bread"
   },
   "lint-staged": {

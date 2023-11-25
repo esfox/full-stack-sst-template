@@ -1,7 +1,16 @@
 {
   "version": "0.2",
   "language": "en",
-  "words": ["tsbuildinfo", "kysely", "updateable", "pascalized", "devkit", "daisyui"],
+  "words": [
+    "tsbuildinfo",
+    "kysely",
+    "updateable",
+    "pascalized",
+    "devkit",
+    "daisyui",
+    "fortawesome",
+    "fontawesome"
+  ],
   "ignorePaths": [
     "node_modules/",
     "build/",

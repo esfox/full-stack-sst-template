@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { menu } from '../../constants/menu';
+import { menu } from '../../constants/menu.constants';
 
 @Component({
   selector: 'app-sidebar',
