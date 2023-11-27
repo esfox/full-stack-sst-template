@@ -19,8 +19,7 @@ import { UserType } from '../../../../types/users.types';
   styleUrl: './users-table-row.component.scss',
 })
 export class UsersTableRowComponent implements OnInit {
-  @ViewChild('template', { static: true }) template!: TemplateRef<unknown>;
-
+  @ViewChild('content', { static: true }) template!: TemplateRef<unknown>;
   @ViewChild('menu') menu!: ElementRef<HTMLDetailsElement>;
 
   @Input() user!: UserType;

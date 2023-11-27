@@ -4,13 +4,16 @@
 <ul class="menu w-full p-0 [&_li>*]:rounded-none">
   @for (item of menu; track item.route) {
     <li>
-      <a
-        [routerLink]="[item.route]"
-        routerLinkActive="active"
+      <label
+        role="link"
+        for="sidebar"
         class="p-3"
+        routerLinkActive="active"
+        [routerLink]="[item.route]"
         [routerLinkActiveOptions]="{ exact: true }"
-        >{{ item.label }}</a
       >
+        {{ item.label }}
+      </label>
     </li>
   }
 </ul>

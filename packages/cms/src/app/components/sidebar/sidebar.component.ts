@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { menu } from '../../constants/menu.constants';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,5 +10,14 @@ import { menu } from '../../constants/menu.constants';
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  menu = menu;
+  menu = [
+    {
+      route: '/',
+      label: 'Dashboard',
+    },
+    {
+      route: '/users',
+      label: 'Users',
+    },
+  ];
 }

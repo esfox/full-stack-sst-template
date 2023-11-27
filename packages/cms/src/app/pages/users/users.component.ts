@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { UsersService } from '../../services/users.service';
 import { UserType } from '../../types/users.types';
 import { UsersTableRowComponent } from './components/users-table-row/users-table-row.component';
@@ -8,7 +9,7 @@ import { UsersTableRowComponent } from './components/users-table-row/users-table
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, UsersTableRowComponent],
+  imports: [CommonModule, UsersTableRowComponent, MainLayoutComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
