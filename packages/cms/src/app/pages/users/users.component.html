@@ -12,12 +12,12 @@
       </tr>
     </thead>
     <tbody>
-      @if (users$ | async; as users) {
-        @for (user of users; track $index) {
+      @if (isLoading()) {
+        Loading...
+      } @else {
+        @for (user of users(); track $index) {
           <app-users-table-row [user]="user" />
         }
-      } @else {
-        Loading...
       }
     </tbody>
   </table>

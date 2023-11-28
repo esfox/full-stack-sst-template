@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Observable, map } from 'rxjs';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { UsersService } from '../../services/users.service';
-import { UserType } from '../../types/users.types';
 import { UsersTableRowComponent } from './components/users-table-row/users-table-row.component';
 
 @Component({
@@ -16,9 +14,10 @@ import { UsersTableRowComponent } from './components/users-table-row/users-table
 export class UsersComponent implements OnInit {
   constructor(private usersService: UsersService) {}
 
-  users$!: Observable<UserType[]>;
+  users = this.usersService.records;
+  isLoading = this.usersService.isLoading;
 
-  async ngOnInit() {
-    this.users$ = this.usersService.get().pipe(map(result => result.records));
+  ngOnInit() {
+    this.usersService.get();
   }
 }
