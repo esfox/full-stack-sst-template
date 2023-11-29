@@ -1,9 +1,11 @@
 <app-main-layout>
   <ng-container nav-title> Users </ng-container>
 
-  <table class="table">
+  <table class="table mb-28">
     <thead>
-      <tr>
+      <tr
+        class="sticky top-[var(--navbar-height)] bg-base-100 border-b-0 shadow-[inset_0_-1px_0_oklch(var(--b2))] z-[2]"
+      >
         <th>Email</th>
         <th>Username</th>
         <th>First Name</th>
@@ -16,7 +18,7 @@
         Loading...
       } @else {
         @for (user of users(); track $index) {
-          <app-users-table-row [user]="user" />
+          <app-users-table-row [user]="user" [alt-bg]="$index % 2 === 0" />
         }
       }
     </tbody>

@@ -1,5 +1,5 @@
 <ng-template #content>
-  <tr>
+  <tr class="border-b-0" [class]="{ 'bg-[var(--table-row-alt-bg)]': altBg }">
     <td>
       <div class="flex items-center gap-3">
         <div class="font-bold">{{ email() }}</div>
@@ -37,7 +37,7 @@
     </td>
   </tr>
   @if (isShowingExpandRow) {
-    <tr>
+    <tr [class]="{ 'bg-[var(--table-row-alt-bg)]': altBg }">
       <td class="align-top p-0" colspan="5">
         <div class="relative">
           <button

@@ -23,6 +23,7 @@ export class UsersTableRowComponent implements OnInit {
   @ViewChild('menu') menu!: ElementRef<HTMLDetailsElement>;
 
   @Input() user!: UserType;
+  @Input('alt-bg') altBg: boolean = false;
 
   email = () => this.user[UserField.Email];
   username = () => this.user[UserField.Username];
