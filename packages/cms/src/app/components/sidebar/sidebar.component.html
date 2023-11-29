@@ -12,6 +12,9 @@
         [routerLink]="[item.route]"
         [routerLinkActiveOptions]="{ exact: true }"
       >
+        @if (item.icon) {
+          <i class="text-center w-5" [class]="item.icon"></i>
+        }
         {{ item.label }}
       </label>
     </li>

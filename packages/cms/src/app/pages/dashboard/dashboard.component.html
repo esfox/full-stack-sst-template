@@ -1,0 +1,21 @@
+<app-main-layout [no-navbar]="true">
+  <label role="button" for="sidebar" class="btn btn-square btn-ghost btn-sm m-4 md:hidden">
+    <i class="fa fa-bars fa-xl"></i>
+  </label>
+  <h1 class="text-3xl font-extrabold text-center py-10">Welcome!</h1>
+  <div class="flex justify-center gap-8">
+    @for (item of menu; track $index) {
+      <button
+        class="w-32 h-32 flex flex-col items-center justify-center bg-[var(--base-150)] shadow-md rounded-xl text-lg font-bold transition-colors hover:bg-neutral hover:text-white"
+        [routerLink]="[item.route]"
+      >
+        @if (item.icon) {
+          <div class="block h-8">
+            <i class="fa-xl" [class]="item.icon"></i>
+          </div>
+        }
+        {{ item.label }}
+      </button>
+    }
+  </div>
+</app-main-layout>
