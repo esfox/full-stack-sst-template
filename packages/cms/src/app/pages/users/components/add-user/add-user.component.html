@@ -1,0 +1,75 @@
+<dialog #modal class="modal">
+  <div class="modal-box w-96 p-0">
+    <h3 class="font-bold text-lg border-b px-6 py-3">Create User</h3>
+    <form #form="ngForm" class="px-6 py-3 pb-6" (ngSubmit)="save(form)" ngNativeValidate>
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">Email</span>
+        </div>
+        <input
+          type="email"
+          placeholder="user@email.com"
+          class="input input-bordered w-full"
+          name="email"
+          ngModel
+          required
+        />
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">Username</span>
+        </div>
+        <input
+          type="text"
+          placeholder="john_doe"
+          class="input input-bordered w-full"
+          name="username"
+          ngModel
+        />
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">First Name</span>
+        </div>
+        <input
+          type="text"
+          placeholder="John"
+          class="input input-bordered w-full"
+          name="firstName"
+          ngModel
+        />
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label">
+          <span class="label-text">Last Name</span>
+        </div>
+        <input
+          type="text"
+          placeholder="Doe"
+          class="input input-bordered w-full"
+          name="lastName"
+          ngModel
+        />
+      </label>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn" [disabled]="isSaving()">Cancel</button>
+        </form>
+        <button class="btn btn-primary" [disabled]="isSaving()">
+          @if (isSaving()) {
+            <span class="loading loading-spinner"></span>
+            Saving...
+          } @else {
+            Save
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button></button>
+  </form>
+</dialog>

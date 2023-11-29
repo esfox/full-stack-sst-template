@@ -24,9 +24,11 @@
 
   <!-- `nav-content` is a selector for the navbar component's `ng-content` -->
   <ng-container nav-content>
-    <button class="btn btn-primary min-h-0 h-9 ml-auto">
+    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="addUser()">
       <i class="fa fa-plus"></i>
       Add User
     </button>
   </ng-container>
 </app-main-layout>
+
+<app-add-user />

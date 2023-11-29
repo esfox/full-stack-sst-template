@@ -11,3 +11,5 @@ export type UserType = {
   [UserField.UpdatedAt]?: string;
   [UserField.DeletedAt]?: string;
 };
+
+export type NewUserType = { email: string; username: string; firstName: string; lastName: string };
