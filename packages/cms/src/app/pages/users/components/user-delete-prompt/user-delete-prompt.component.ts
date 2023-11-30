@@ -1,25 +1,17 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { UserField } from '../../../../constants/users.constants';
+import { DialogPreventEscDirective } from '../../../../directives/dialog-prevent-esc.directive';
 import { UserType } from '../../../../types/users.types';
 
 @Component({
   selector: 'app-user-delete-prompt',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DialogPreventEscDirective],
   templateUrl: './user-delete-prompt.component.html',
   styleUrl: './user-delete-prompt.component.scss',
 })
-export class UserDeletePromptComponent implements AfterViewInit, OnDestroy {
+export class UserDeletePromptComponent {
   @ViewChild('modal') modal!: ElementRef<HTMLDialogElement>;
 
   @Input('loading') isLoading = false;
@@ -27,19 +19,6 @@ export class UserDeletePromptComponent implements AfterViewInit, OnDestroy {
   @Output('delete') onDelete = new EventEmitter();
 
   userEmail = '';
-
-  ngAfterViewInit() {
-    /* Prevent closing on pressing `esc` */
-    this.modal.nativeElement.addEventListener('cancel', this.preventCloseOnEsc);
-  }
-
-  ngOnDestroy() {
-    this.modal.nativeElement.removeEventListener('cancel', this.preventCloseOnEsc);
-  }
-
-  private preventCloseOnEsc(event: Event) {
-    event.preventDefault();
-  }
 
   show(userToDelete: UserType) {
     this.userEmail = userToDelete[UserField.Email];

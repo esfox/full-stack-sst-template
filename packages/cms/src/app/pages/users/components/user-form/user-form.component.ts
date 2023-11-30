@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { UserField } from '../../../../constants/users.constants';
+import { DialogPreventEscDirective } from '../../../../directives/dialog-prevent-esc.directive';
 import { UserFormDataType, UserType } from '../../../../types/users.types';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DialogPreventEscDirective],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
 })

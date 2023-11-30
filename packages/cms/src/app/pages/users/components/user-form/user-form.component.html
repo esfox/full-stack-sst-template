@@ -1,4 +1,4 @@
-<dialog #modal class="modal">
+<dialog #modal class="modal" app-dialog-prevent-esc>
   <div class="modal-box w-96 p-0">
     <h3 class="font-bold text-lg border-b px-6 py-3">{{ isEditing ? 'Edit' : 'Create' }} User</h3>
     <form #form="ngForm" class="px-6 py-3 pb-6" (ngSubmit)="save()" ngNativeValidate>
@@ -69,7 +69,4 @@
       </div>
     </form>
   </div>
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
 </dialog>
