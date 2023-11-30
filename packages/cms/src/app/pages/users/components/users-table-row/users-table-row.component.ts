@@ -27,7 +27,8 @@ export class UsersTableRowComponent implements OnInit {
   @Input() user!: UserType;
   @Input('alt-bg') altBg: boolean = false;
 
-  @Output('on-edit') onEdit = new EventEmitter();
+  @Output('edit') onEdit = new EventEmitter();
+  @Output('delete') onDelete = new EventEmitter();
 
   email = () => this.user[UserField.Email];
   username = () => this.user[UserField.Username];

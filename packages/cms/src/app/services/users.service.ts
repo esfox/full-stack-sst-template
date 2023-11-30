@@ -4,6 +4,7 @@ import { UserFormDataType, UserType } from '../types/users.types';
 import { ApiService } from './api.service';
 
 type GetUsersResponse = { records: UserType[]; totalRecords: number };
+type UserRecordResponse = { record: UserType };
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +13,12 @@ export class UsersService {
   records = signal<UserType[]>([]);
   totalRecords = signal(0);
   isLoading = signal(false);
-  isSaving = signal(false);
-  savedRecord = signal<UserType | undefined>(undefined);
+
+  /* Indicates whether a user is being created, edited, or deleted */
+  isProcessing = signal(false);
+
+  /* This can be either the created, edited, or deleted user */
+  processedRecord = signal<UserType | undefined>(undefined);
 
   constructor(private api: ApiService) {
     this.api.basePath = '/users';
@@ -33,11 +38,11 @@ export class UsersService {
   }
 
   async create(data: UserFormDataType) {
-    this.isSaving.set(true);
+    this.isProcessing.set(true);
     try {
       const response = await this.api.post<UserType>('/', this.mapData(data));
-      this.isSaving.set(false);
-      this.savedRecord.set(response);
+      this.isProcessing.set(false);
+      this.processedRecord.set(response);
       this.get();
     } catch (error) {
       //  TODO: handle error
@@ -46,11 +51,24 @@ export class UsersService {
   }
 
   async edit(id: string, data: UserFormDataType) {
-    this.isSaving.set(true);
+    this.isProcessing.set(true);
     try {
-      const response = await this.api.patch<UserType>(`/${id}`, this.mapData(data));
-      this.isSaving.set(false);
-      this.savedRecord.set(response);
+      const { record } = await this.api.patch<UserRecordResponse>(`/${id}`, this.mapData(data));
+      this.isProcessing.set(false);
+      this.processedRecord.set(record);
+      this.get();
+    } catch (error) {
+      // TODO: handle error
+      console.error(error);
+    }
+  }
+
+  async delete(id: string) {
+    this.isProcessing.set(true);
+    try {
+      const { record } = await this.api.delete<UserRecordResponse>(`/${id}`);
+      this.isProcessing.set(false);
+      this.processedRecord.set(record);
       this.get();
     } catch (error) {
       // TODO: handle error

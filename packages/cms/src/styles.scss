@@ -12,3 +12,8 @@ html,
 body {
   height: 100%;
 }
+
+// DaisyUI theme overrides
+.btn-error {
+  @apply text-neutral-content;
+}

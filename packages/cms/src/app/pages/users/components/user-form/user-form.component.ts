@@ -16,8 +16,8 @@ export class UserFormComponent {
   @ViewChild('modal') modal!: ElementRef<HTMLDialogElement>;
   @ViewChild('form') form!: NgForm;
 
-  isSaving = this.usersService.isSaving;
-  savedUser = this.usersService.savedRecord;
+  isSaving = this.usersService.isProcessing;
+  savedUser = this.usersService.processedRecord;
 
   editUserId: string | undefined = undefined;
 

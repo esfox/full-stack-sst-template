@@ -48,4 +48,9 @@ export class ApiService {
 
     return response.json() as T;
   }
+
+  async delete<T = unknown>(id: string) {
+    const response = await fetch(this.getUrl(id), { method: 'DELETE' });
+    return response.json() as T;
+  }
 }

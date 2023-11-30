@@ -1,5 +1,12 @@
 <app-main-layout>
   <ng-container nav-title> Users </ng-container>
+  <!-- `nav-content` is a selector for the navbar component's `ng-content` -->
+  <ng-container nav-content>
+    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="addUser()">
+      <i class="fa fa-plus"></i>
+      Add User
+    </button>
+  </ng-container>
 
   @if (isLoading()) {
     <span class="loading loading-spinner loading-lg block mx-auto my-24"></span>
@@ -21,20 +28,14 @@
           <app-users-table-row
             [user]="user"
             [alt-bg]="$index % 2 === 0"
-            (on-edit)="editUser(user)"
+            (edit)="editUser(user)"
+            (delete)="promptDeleteUser(user)"
           />
         }
       </tbody>
     </table>
   }
-
-  <!-- `nav-content` is a selector for the navbar component's `ng-content` -->
-  <ng-container nav-content>
-    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="addUser()">
-      <i class="fa fa-plus"></i>
-      Add User
-    </button>
-  </ng-container>
 </app-main-layout>
 
 <app-user-form />
+<app-user-delete-prompt [loading]="isProcessing()" (delete)="deleteUser()" />
