@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { UserField } from '../../../../constants/users.constants';
-import { UsersService } from '../../../../services/users.service';
 import { UserFormDataType, UserType } from '../../../../types/users.types';
 
 @Component({
@@ -16,37 +15,21 @@ export class UserFormComponent {
   @ViewChild('modal') modal!: ElementRef<HTMLDialogElement>;
   @ViewChild('form') form!: NgForm;
 
-  isSaving = this.usersService.isProcessing;
-  savedUser = this.usersService.processedRecord;
+  @Input('loading') isLoading = false;
 
-  editUserId: string | undefined = undefined;
+  @Output('save') onSave = new EventEmitter<UserFormDataType>();
 
-  static mode = {
-    Create: 'create',
-    Edit: 'edit',
-  };
+  isEditing = false;
 
-  constructor(private usersService: UsersService) {}
-
-  async save() {
-    const values: UserFormDataType = this.form.value;
-    if (this.editUserId) {
-      await this.usersService.edit(this.editUserId, values);
-    } else {
-      await this.usersService.create(values);
-    }
-
-    if (this.savedUser()) {
-      this.form.reset();
-      this.modal.nativeElement.close();
-    }
+  save() {
+    this.onSave.emit(this.form.value);
   }
 
-  open(defaultData?: Partial<UserType>) {
+  show(defaultData?: Partial<UserType>) {
     this.form.reset();
 
     if (defaultData && defaultData.id) {
-      this.editUserId = defaultData.id;
+      this.isEditing = true;
       this.form.setValue({
         email: defaultData[UserField.Email] ?? '',
         username: defaultData[UserField.Username] ?? '',
@@ -54,9 +37,14 @@ export class UserFormComponent {
         lastName: defaultData[UserField.LastName] ?? '',
       });
     } else {
-      this.editUserId = undefined;
+      this.isEditing = false;
     }
 
     this.modal.nativeElement.showModal();
+  }
+
+  hide() {
+    this.form.reset();
+    this.modal.nativeElement.close();
   }
 }

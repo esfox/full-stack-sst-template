@@ -14,11 +14,11 @@ export class UsersService {
   totalRecords = signal(0);
   isLoading = signal(false);
 
-  /* Indicates whether a user is being created, edited, or deleted */
-  isProcessing = signal(false);
+  savedRecord = signal<UserType | undefined>(undefined);
+  isSaving = signal(false);
 
-  /* This can be either the created, edited, or deleted user */
-  processedRecord = signal<UserType | undefined>(undefined);
+  deletedRecord = signal<UserType | undefined>(undefined);
+  isDeleting = signal(false);
 
   constructor(private api: ApiService) {
     this.api.basePath = '/users';
@@ -38,11 +38,11 @@ export class UsersService {
   }
 
   async create(data: UserFormDataType) {
-    this.isProcessing.set(true);
+    this.isSaving.set(true);
     try {
       const response = await this.api.post<UserType>('/', this.mapData(data));
-      this.isProcessing.set(false);
-      this.processedRecord.set(response);
+      this.isSaving.set(false);
+      this.savedRecord.set(response);
       this.get();
     } catch (error) {
       //  TODO: handle error
@@ -51,11 +51,11 @@ export class UsersService {
   }
 
   async edit(id: string, data: UserFormDataType) {
-    this.isProcessing.set(true);
+    this.isSaving.set(true);
     try {
       const { record } = await this.api.patch<UserRecordResponse>(`/${id}`, this.mapData(data));
-      this.isProcessing.set(false);
-      this.processedRecord.set(record);
+      this.isSaving.set(false);
+      this.savedRecord.set(record);
       this.get();
     } catch (error) {
       // TODO: handle error
@@ -64,11 +64,11 @@ export class UsersService {
   }
 
   async delete(id: string) {
-    this.isProcessing.set(true);
+    this.isDeleting.set(true);
     try {
       const { record } = await this.api.delete<UserRecordResponse>(`/${id}`);
-      this.isProcessing.set(false);
-      this.processedRecord.set(record);
+      this.isDeleting.set(false);
+      this.deletedRecord.set(record);
       this.get();
     } catch (error) {
       // TODO: handle error

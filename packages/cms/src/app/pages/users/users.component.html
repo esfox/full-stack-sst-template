@@ -37,5 +37,5 @@
   }
 </app-main-layout>
 
-<app-user-form />
-<app-user-delete-prompt [loading]="isProcessing()" (delete)="deleteUser()" />
+<app-user-form [loading]="isSaving()" (save)="saveUser($event)" />
+<app-user-delete-prompt [loading]="isDeleting()" (delete)="deleteUser()" />

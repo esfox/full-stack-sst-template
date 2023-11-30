@@ -1,6 +1,6 @@
 <dialog #modal class="modal">
   <div class="modal-box w-96 p-0">
-    <h3 class="font-bold text-lg border-b px-6 py-3">{{ editUserId ? 'Edit' : 'Create' }} User</h3>
+    <h3 class="font-bold text-lg border-b px-6 py-3">{{ isEditing ? 'Edit' : 'Create' }} User</h3>
     <form #form="ngForm" class="px-6 py-3 pb-6" (ngSubmit)="save()" ngNativeValidate>
       <label class="form-control w-full">
         <div class="label">
@@ -56,10 +56,10 @@
       </label>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn" [disabled]="isSaving()">Cancel</button>
+          <button class="btn" [disabled]="isLoading">Cancel</button>
         </form>
-        <button class="btn btn-primary" [disabled]="isSaving()">
-          @if (isSaving()) {
+        <button class="btn btn-primary" [disabled]="isLoading">
+          @if (isLoading) {
             <span class="loading loading-spinner"></span>
             Saving...
           } @else {

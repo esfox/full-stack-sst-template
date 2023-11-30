@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -5,13 +6,11 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
-  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { UserType } from '../../../../types/users.types';
 import { UserField } from '../../../../constants/users.constants';
+import { UserType } from '../../../../types/users.types';
 
 @Component({
   selector: 'app-user-delete-prompt',
