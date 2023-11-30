@@ -18,7 +18,11 @@
       </thead>
       <tbody>
         @for (user of users(); track $index) {
-          <app-users-table-row [user]="user" [alt-bg]="$index % 2 === 0" />
+          <app-users-table-row
+            [user]="user"
+            [alt-bg]="$index % 2 === 0"
+            (on-edit)="editUser(user)"
+          />
         }
       </tbody>
     </table>
@@ -33,4 +37,4 @@
   </ng-container>
 </app-main-layout>
 
-<app-add-user />
+<app-user-form />

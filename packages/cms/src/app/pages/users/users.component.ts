@@ -3,17 +3,18 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { UsersService } from '../../services/users.service';
 import { UsersTableRowComponent } from './components/users-table-row/users-table-row.component';
-import { AddUserComponent } from './components/add-user/add-user.component';
+import { UserFormComponent } from './components/user-form/user-form.component';
+import { UserType } from '../../types/users.types';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, UsersTableRowComponent, MainLayoutComponent, AddUserComponent],
+  imports: [CommonModule, UsersTableRowComponent, MainLayoutComponent, UserFormComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
 export class UsersComponent implements OnInit {
-  @ViewChild(AddUserComponent) addUserComponent!: AddUserComponent;
+  @ViewChild(UserFormComponent) userFormComponent!: UserFormComponent;
 
   users = this.usersService.records;
   isLoading = this.usersService.isLoading;
@@ -25,6 +26,10 @@ export class UsersComponent implements OnInit {
   }
 
   addUser() {
-    this.addUserComponent.openModal();
+    this.userFormComponent.open();
+  }
+
+  editUser(user: UserType) {
+    this.userFormComponent.open(user);
   }
 }

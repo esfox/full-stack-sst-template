@@ -2,8 +2,10 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -24,6 +26,8 @@ export class UsersTableRowComponent implements OnInit {
 
   @Input() user!: UserType;
   @Input('alt-bg') altBg: boolean = false;
+
+  @Output('on-edit') onEdit = new EventEmitter();
 
   email = () => this.user[UserField.Email];
   username = () => this.user[UserField.Username];

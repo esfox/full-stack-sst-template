@@ -12,4 +12,9 @@ export type UserType = {
   [UserField.DeletedAt]?: string;
 };
 
-export type NewUserType = { email: string; username: string; firstName: string; lastName: string };
+export type UserFormDataType = {
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+};

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 
+const jsonContentType = { 'Content-Type': 'application/json' };
+
 @Injectable({
   providedIn: 'root',
 })
@@ -27,7 +29,19 @@ export class ApiService {
     const response = await fetch(this.getUrl(path), {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        ...jsonContentType,
+      },
+      body: JSON.stringify(data),
+    });
+
+    return response.json() as T;
+  }
+
+  async patch<T = unknown>(path: string, data: unknown) {
+    const response = await fetch(this.getUrl(path), {
+      method: 'PATCH',
+      headers: {
+        ...jsonContentType,
       },
       body: JSON.stringify(data),
     });

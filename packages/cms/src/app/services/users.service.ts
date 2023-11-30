@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-import { NewUserType, UserType } from '../types/users.types';
+import { UserField } from '../constants/users.constants';
+import { UserFormDataType, UserType } from '../types/users.types';
 import { ApiService } from './api.service';
 
 type GetUsersResponse = { records: UserType[]; totalRecords: number };
@@ -31,10 +32,10 @@ export class UsersService {
     }
   }
 
-  async create(newUser: NewUserType) {
+  async create(data: UserFormDataType) {
     this.isSaving.set(true);
     try {
-      const response = await this.api.post<UserType>('/', newUser);
+      const response = await this.api.post<UserType>('/', this.mapData(data));
       this.isSaving.set(false);
       this.savedRecord.set(response);
       this.get();
@@ -42,5 +43,27 @@ export class UsersService {
       //  TODO: handle error
       console.error(error);
     }
+  }
+
+  async edit(id: string, data: UserFormDataType) {
+    this.isSaving.set(true);
+    try {
+      const response = await this.api.patch<UserType>(`/${id}`, this.mapData(data));
+      this.isSaving.set(false);
+      this.savedRecord.set(response);
+      this.get();
+    } catch (error) {
+      // TODO: handle error
+      console.error(error);
+    }
+  }
+
+  private mapData(data: UserFormDataType): Partial<UserType> {
+    return {
+      [UserField.Email]: data.email,
+      [UserField.Username]: data.username,
+      [UserField.FirstName]: data.firstName,
+      [UserField.LastName]: data.lastName,
+    };
   }
 }
