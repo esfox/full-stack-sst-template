@@ -5,8 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "setenv": "sucrase-node scripts/setenv.ts"
   },
   "private": true,
   "dependencies": {
@@ -38,6 +38,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^17.0.0",
     "postcss": "^8.4.31",
+    "sucrase": "^3.34.0",
     "tailwindcss": "^3.3.5",
     "typescript": "~5.2.2"
   }

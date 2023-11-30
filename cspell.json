@@ -9,7 +9,8 @@
     "devkit",
     "daisyui",
     "fortawesome",
-    "fontawesome"
+    "fontawesome",
+    "setenv"
   ],
   "ignorePaths": [
     "node_modules/",

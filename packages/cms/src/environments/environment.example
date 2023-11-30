@@ -1,5 +1,6 @@
 import { EnvironmentType } from './environment-type';
 
 export const environment: EnvironmentType = {
-  apiUrl: 'API_URL',
+  production: {IS_PROD},
+  apiUrl: '{API_URL}',
 };

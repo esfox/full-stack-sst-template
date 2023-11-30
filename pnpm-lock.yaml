@@ -153,7 +153,7 @@ importers:
     devDependencies:
       '@angular-devkit/build-angular':
         specifier: ^17.0.2
-        version: 17.0.2(@angular/compiler-cli@17.0.3)(karma@6.4.2)(ng-packagr@17.0.2)(tailwindcss@3.3.5)(typescript@5.2.2)
+        version: 17.0.2(@angular/compiler-cli@17.0.3)(@types/node@20.9.1)(karma@6.4.2)(ng-packagr@17.0.2)(tailwindcss@3.3.5)(typescript@5.2.2)
       '@angular/cli':
         specifier: ^17.0.2
         version: 17.0.2
@@ -193,6 +193,9 @@ importers:
       postcss:
         specifier: ^8.4.31
         version: 8.4.31
+      sucrase:
+        specifier: ^3.34.0
+        version: 3.34.0
       tailwindcss:
         specifier: ^3.3.5
         version: 3.3.5
@@ -238,7 +241,7 @@ packages:
       - chokidar
     dev: true
 
-  /@angular-devkit/build-angular@17.0.2(@angular/compiler-cli@17.0.3)(karma@6.4.2)(ng-packagr@17.0.2)(tailwindcss@3.3.5)(typescript@5.2.2):
+  /@angular-devkit/build-angular@17.0.2(@angular/compiler-cli@17.0.3)(@types/node@20.9.1)(karma@6.4.2)(ng-packagr@17.0.2)(tailwindcss@3.3.5)(typescript@5.2.2):
     resolution: {integrity: sha512-SFg8hTKs1aIW7DBaVAwq6W2HIreI4MRf7S3jDDzITnGZS2NB1qukFk2KHRMa7A+J61Z8wry0z44CCwXmINosKQ==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
@@ -337,7 +340,7 @@ packages:
       tslib: 2.6.2
       typescript: 5.2.2
       undici: 5.27.2
-      vite: 4.5.0(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+      vite: 4.5.0(@types/node@20.9.1)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
       webpack: 5.89.0(esbuild@0.19.5)
       webpack-dev-middleware: 6.1.1(webpack@5.89.0)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
@@ -5669,7 +5672,7 @@ packages:
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0
     dependencies:
-      vite: 4.5.0(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+      vite: 4.5.0(@types/node@20.9.1)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
     dev: true
 
   /@webassemblyjs/ast@1.11.6:
@@ -13877,7 +13880,7 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite@4.5.0(less@4.2.0)(sass@1.69.5)(terser@5.24.0):
+  /vite@4.5.0(@types/node@20.9.1)(less@4.2.0)(sass@1.69.5)(terser@5.24.0):
     resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -13905,6 +13908,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 20.9.1
       esbuild: 0.18.13
       less: 4.2.0
       postcss: 8.4.31
