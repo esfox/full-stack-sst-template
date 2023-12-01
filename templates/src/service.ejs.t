@@ -1,5 +1,5 @@
 ---
-to: api/services/<%= h.inflection.dasherize(tableName) %>.service.ts
+to: packages/api/services/<%= h.inflection.dasherize(tableName) %>.service.ts
 ---
 <% const withUpdatedAt = columns.find(column => column.name === 'updated_at') %>
 <% const withDeletedAt = columns.find(column => column.name === 'deleted_at') %>

@@ -1,6 +1,14 @@
 export enum TableName {
-  Permissions = 'permissions',
+  Roles = 'roles',
   Users = 'users',
+}
+
+export enum RoleField {
+  Id = 'id',
+  Name = 'name',
+  CreatedAt = 'created_at',
+  UpdatedAt = 'updated_at',
+  DeletedAt = 'deleted_at',
 }
 
 export enum UserField {

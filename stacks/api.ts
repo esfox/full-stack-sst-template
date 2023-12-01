@@ -11,6 +11,13 @@ export function API({ stack }: StackContext) {
       'GET /docs': `${apiHandlersPath}/docs.handler`,
       'GET /swagger.json': `${apiHandlersPath}/docs.handler`,
 
+      'GET /roles': `${apiHandlersPath}/roles.list`,
+      'GET /roles/{id}': `${apiHandlersPath}/roles.get`,
+      'POST /roles': `${apiHandlersPath}/roles.post`,
+      'PATCH /roles/{id}': `${apiHandlersPath}/roles.patch`,
+      'DELETE /roles/{id}': `${apiHandlersPath}/roles.destroy`,
+      'DELETE /roles/{id}/archive': `${apiHandlersPath}/roles.archive`,
+
       'GET /users': `${apiHandlersPath}/users.list`,
       'GET /users/{id}': `${apiHandlersPath}/users.get`,
       'POST /users': `${apiHandlersPath}/users.post`,
@@ -26,7 +33,5 @@ export function API({ stack }: StackContext) {
     ApiEndpoint: api.url,
   });
 
-  return {
-    api,
-  };
+  return { api };
 }

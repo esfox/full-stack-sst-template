@@ -1,4 +1,12 @@
-import { type TableName, type UserField } from './constants';
+import { TableName, RoleField, UserField } from './constants';
+
+export interface Roles {
+  [RoleField.Id]: string;
+  [RoleField.Name]: string;
+  [RoleField.CreatedAt]: string;
+  [RoleField.UpdatedAt]?: string | null;
+  [RoleField.DeletedAt]?: string | null;
+}
 
 export interface Users {
   [UserField.Id]: string;
@@ -13,5 +21,6 @@ export interface Users {
 }
 
 export interface Database {
+  [TableName.Roles]: Roles;
   [TableName.Users]: Users;
 }
