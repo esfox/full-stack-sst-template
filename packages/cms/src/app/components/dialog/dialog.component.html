@@ -1,0 +1,8 @@
+<dialog #dialog class="modal" app-dialog-prevent-esc>
+  <div class="modal-box w-96 p-0">
+    <h3 class="font-bold text-lg border-b px-6 py-3">
+      <ng-content select="[dialog-title]" />
+    </h3>
+    <ng-content />
+  </div>
+</dialog>

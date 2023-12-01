@@ -1,0 +1,24 @@
+<app-dialog #dialog>
+  <ng-container dialog-title>
+    <ng-content select="[dialog-title]" />
+  </ng-container>
+  <ng-content />
+  <div class="modal-action px-6 pb-6">
+    <form method="dialog">
+      <button class="btn" app-empty-placeholder="Cancel" [disabled]="disabled">
+        <ng-content select="[dialog-cancel]" />
+      </button>
+    </form>
+    <button
+      class="btn"
+      app-empty-placeholder="Confirm"
+      [class]="isDangerConfirm ? 'btn-error text-white' : 'btn-primary'"
+      [disabled]="disabled"
+      (click)="onConfirm.emit()"
+    >
+      <ng-container #confirm>
+        <ng-content select="[dialog-confirm]" />
+      </ng-container>
+    </button>
+  </div>
+</app-dialog>

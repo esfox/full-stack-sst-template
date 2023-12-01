@@ -2,7 +2,7 @@
   <ng-container nav-title> Users </ng-container>
   <!-- `nav-content` is a selector for the navbar component's `ng-content` -->
   <ng-container nav-content>
-    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="addUser()">
+    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="showUserForm()">
       <i class="fa fa-plus"></i>
       Add User
     </button>
@@ -28,7 +28,7 @@
           <app-users-table-row
             [user]="user"
             [alt-bg]="$index % 2 === 0"
-            (edit)="editUser(user)"
+            (edit)="showUserForm(user)"
             (delete)="promptDeleteUser(user)"
           />
         }
@@ -37,5 +37,27 @@
   }
 </app-main-layout>
 
-<app-user-form [loading]="isSaving()" (save)="saveUser($event)" />
-<app-user-delete-prompt [loading]="isDeleting()" (delete)="deleteUser()" />
+<app-dialog #userFormDialog>
+  <ng-container dialog-title> {{ userToEdit ? 'Edit' : 'Create' }} User </ng-container>
+  <app-user-form [loading]="isSaving()" (save)="saveUser($event)" />
+</app-dialog>
+
+<app-prompt-dialog
+  #deletePromptDialog
+  [danger-confirm]="true"
+  [disabled]="isDeleting()"
+  (confirm)="deleteUser()"
+>
+  <ng-container dialog-title>Confirm Delete</ng-container>
+  <p class="px-6 py-4">
+    Are you sure you want to delete the user with email: <code>{{ userToDeleteEmail }}</code>
+  </p>
+  <ng-container dialog-confirm>
+    @if (isDeleting()) {
+      <span class="loading loading-spinner"></span>
+      Deleting...
+    } @else {
+      Delete
+    }
+  </ng-container>
+</app-prompt-dialog>

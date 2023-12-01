@@ -14,7 +14,7 @@ export type UserType = {
 
 export type UserFormDataType = {
   email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
 };
