@@ -17,9 +17,11 @@ export class ApiService<DataType = unknown> {
   totalRecords = signal(0);
   isLoading = signal(false);
 
+  recordToSave = signal<Partial<DataType> | undefined>(undefined);
   savedRecord = signal<DataType | undefined>(undefined);
   isSaving = signal(false);
 
+  recordToDelete = signal<DataType | undefined>(undefined);
   deletedRecord = signal<DataType | undefined>(undefined);
   isDeleting = signal(false);
 
@@ -31,10 +33,7 @@ export class ApiService<DataType = unknown> {
 
     const _path = basePath.startsWith('/') ? basePath.substring(1) : basePath;
     this.url = new URL(_path, baseUrl).toString();
-
-    if (dataMapping) {
-      this.dataMapping = dataMapping;
-    }
+    this.dataMapping = dataMapping ?? [];
   }
 
   async get() {

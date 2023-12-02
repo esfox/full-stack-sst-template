@@ -1,8 +1,8 @@
 <app-main-layout>
   <ng-container nav-title> Users </ng-container>
-  <!-- `nav-content` is a selector for the navbar component's `ng-content` -->
+
   <ng-container nav-content>
-    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="showUserForm()">
+    <button class="btn btn-primary min-h-0 h-9 ml-auto" (click)="showRecordForm()">
       <i class="fa fa-plus"></i>
       Add User
     </button>
@@ -24,12 +24,12 @@
         </tr>
       </thead>
       <tbody>
-        @for (user of users(); track $index) {
+        @for (user of records(); track $index) {
           <app-users-table-row
             [user]="user"
             [alt-bg]="$index % 2 === 0"
-            (edit)="showUserForm(user)"
-            (delete)="promptDeleteUser(user)"
+            (edit)="showRecordForm(user)"
+            (delete)="showDeletePrompt(user)"
           />
         }
       </tbody>
@@ -37,20 +37,20 @@
   }
 </app-main-layout>
 
-<app-dialog #userFormDialog>
-  <ng-container dialog-title> {{ userToEdit ? 'Edit' : 'Create' }} User </ng-container>
-  <app-user-form [loading]="isSaving()" (save)="saveUser($event)" />
+<app-dialog #recordFormDialog [title]="recordFormDialogTitle()">
+  <app-user-form [loading]="isSaving()" (save)="saveRecord($event)" />
 </app-dialog>
 
 <app-prompt-dialog
   #deletePromptDialog
+  title="Confirm Delete"
   [danger-confirm]="true"
   [disabled]="isDeleting()"
-  (confirm)="deleteUser()"
+  (confirm)="deleteRecord()"
 >
-  <ng-container dialog-title>Confirm Delete</ng-container>
   <p class="px-6 py-4">
-    Are you sure you want to delete the user with email: <code>{{ userToDeleteEmail }}</code>
+    Are you sure you want to delete the user with email:
+    <code>{{ recordToDeleteEmail() }}</code>
   </p>
   <ng-container dialog-confirm>
     @if (isDeleting()) {

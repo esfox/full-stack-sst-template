@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, computed, effect } from '@angular/core';
+import {
+  BaseResourceComponent,
+  injectionTokens,
+} from '../../components/base-resource/base-resource.component';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
@@ -21,67 +25,32 @@ import { UsersTableRowComponent } from './components/users-table-row/users-table
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
+  providers: [
+    { provide: injectionTokens.service, useClass: UsersService },
+    { provide: injectionTokens.getId, useValue: (record: UserType) => record.id },
+  ],
 })
-export class UsersComponent implements OnInit {
-  @ViewChild('userFormDialog') userFormDialog!: DialogComponent;
-  @ViewChild('deletePromptDialog') deletePromptDialog!: PromptDialogComponent;
+export class UsersComponent extends BaseResourceComponent<UserType> implements OnInit {
   @ViewChild(UserFormComponent) userFormComponent!: UserFormComponent;
 
-  userToEdit: UserType | undefined;
-  userToDelete: UserType | undefined;
+  recordFormDialogTitle = computed(() => `${this.recordToSave() ? 'Edit' : 'Create'} User`);
+  recordToDeleteEmail = computed(() => this.recordToDelete()?.email);
 
-  userToDeleteEmail!: string;
+  constructor() {
+    super();
 
-  users = this.usersService.records;
-  isLoading = this.usersService.isLoading;
-  isSaving = this.usersService.isSaving;
-  isDeleting = this.usersService.isDeleting;
-
-  constructor(private usersService: UsersService) {}
-
-  async ngOnInit() {
-    await this.usersService.get();
-  }
-
-  showUserForm(user?: UserType) {
-    this.userToEdit = user;
-    this.userFormDialog.show();
-
-    if (user) {
-      this.userFormComponent.setValues<Partial<UserType>>({
-        email: user.email,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      });
-    } else {
-      this.userFormComponent.reset();
-    }
-  }
-
-  promptDeleteUser(user: UserType) {
-    this.userToDelete = user;
-    this.userToDeleteEmail = this.userToDelete.email;
-    this.deletePromptDialog.show();
-  }
-
-  async saveUser(data: Partial<UserType>) {
-    if (this.userToEdit) {
-      await this.usersService.edit(this.userToEdit?.id, data);
-    } else {
-      await this.usersService.create(data);
-    }
-
-    if (this.usersService.savedRecord()) {
-      this.userFormDialog.hide();
-    }
-  }
-
-  async deleteUser() {
-    const userId = this.userToDelete?.id;
-    if (userId) {
-      await this.usersService.delete(userId);
-      this.deletePromptDialog.hide();
-    }
+    effect(() => {
+      const recordToSave = this.recordToSave();
+      if (recordToSave) {
+        this.userFormComponent.setValues<UserType>({
+          email: recordToSave.email,
+          username: recordToSave?.username,
+          firstName: recordToSave?.firstName ?? '',
+          lastName: recordToSave?.lastName ?? '',
+        });
+      } else {
+        this.userFormComponent.reset();
+      }
+    });
   }
 }

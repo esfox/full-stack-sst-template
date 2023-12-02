@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { DialogPreventEscDirective } from '../../directives/dialog-prevent-esc.directive';
 
 @Component({
@@ -11,6 +11,12 @@ import { DialogPreventEscDirective } from '../../directives/dialog-prevent-esc.d
 })
 export class DialogComponent {
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
+
+  @Input({ alias: 'title', required: true }) title!: string;
+
+  get shown() {
+    return this.dialog.nativeElement.open;
+  }
 
   show() {
     this.dialog.nativeElement.showModal();

@@ -15,9 +15,14 @@ export class PromptDialogComponent {
   @ViewChild('dialog') dialog!: DialogComponent;
 
   @Input() disabled = false;
+  @Input('title') title = 'Confirm';
   @Input('danger-confirm') isDangerConfirm = false;
 
   @Output('confirm') onConfirm = new EventEmitter();
+
+  get shown() {
+    return this.dialog.shown;
+  }
 
   show() {
     this.dialog.show();

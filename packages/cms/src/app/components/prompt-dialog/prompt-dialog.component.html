@@ -1,7 +1,4 @@
-<app-dialog #dialog>
-  <ng-container dialog-title>
-    <ng-content select="[dialog-title]" />
-  </ng-container>
+<app-dialog #dialog [title]="title">
   <ng-content />
   <div class="modal-action px-6 pb-6">
     <form method="dialog">
