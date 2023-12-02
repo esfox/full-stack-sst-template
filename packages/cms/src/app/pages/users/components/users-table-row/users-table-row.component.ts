@@ -10,7 +10,6 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { UserField } from '../../../../constants/users.constants';
 import { UserType } from '../../../../types/users.types';
 
 @Component({
@@ -29,14 +28,6 @@ export class UsersTableRowComponent implements OnInit {
 
   @Output('edit') onEdit = new EventEmitter();
   @Output('delete') onDelete = new EventEmitter();
-
-  email = () => this.user[UserField.Email];
-  username = () => this.user[UserField.Username];
-  firstName = () => this.user[UserField.FirstName];
-  lastName = () => this.user[UserField.LastName];
-  id = () => this.user[UserField.Id];
-  createdAt = () => this.user[UserField.CreatedAt];
-  lastUpdatedAt = () => this.user[UserField.UpdatedAt];
 
   isShowingExpandRow = false;
 

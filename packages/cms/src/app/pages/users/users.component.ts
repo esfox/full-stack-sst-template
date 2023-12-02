@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DialogComponent } from '../../components/dialog/dialog.component';
 import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
-import { UserField } from '../../constants/users.constants';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { UsersService } from '../../services/users.service';
-import { UserFormDataType, UserType } from '../../types/users.types';
+import { UserType } from '../../types/users.types';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { UsersTableRowComponent } from './components/users-table-row/users-table-row.component';
 
@@ -31,6 +30,8 @@ export class UsersComponent implements OnInit {
   userToEdit: UserType | undefined;
   userToDelete: UserType | undefined;
 
+  userToDeleteEmail!: string;
+
   users = this.usersService.records;
   isLoading = this.usersService.isLoading;
   isSaving = this.usersService.isSaving;
@@ -42,20 +43,16 @@ export class UsersComponent implements OnInit {
     await this.usersService.get();
   }
 
-  get userToDeleteEmail() {
-    return this.userToDelete?.[UserField.Email] ?? '';
-  }
-
   showUserForm(user?: UserType) {
     this.userToEdit = user;
     this.userFormDialog.show();
 
     if (user) {
-      this.userFormComponent.setValues<UserFormDataType>({
-        email: user[UserField.Email],
-        username: user[UserField.Username],
-        firstName: user[UserField.FirstName],
-        lastName: user[UserField.LastName],
+      this.userFormComponent.setValues<Partial<UserType>>({
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
       });
     } else {
       this.userFormComponent.reset();
@@ -64,12 +61,13 @@ export class UsersComponent implements OnInit {
 
   promptDeleteUser(user: UserType) {
     this.userToDelete = user;
+    this.userToDeleteEmail = this.userToDelete.email;
     this.deletePromptDialog.show();
   }
 
-  async saveUser(data: UserFormDataType) {
+  async saveUser(data: Partial<UserType>) {
     if (this.userToEdit) {
-      await this.usersService.edit(this.userToEdit?.[UserField.Id], data);
+      await this.usersService.edit(this.userToEdit?.id, data);
     } else {
       await this.usersService.create(data);
     }
@@ -80,7 +78,7 @@ export class UsersComponent implements OnInit {
   }
 
   async deleteUser() {
-    const userId = this.userToDelete?.[UserField.Id];
+    const userId = this.userToDelete?.id;
     if (userId) {
       await this.usersService.delete(userId);
       this.deletePromptDialog.hide();

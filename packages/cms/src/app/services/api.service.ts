@@ -1,43 +1,51 @@
 // TODO: HANDLE ERRORS!
-
-import { Injectable, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 
 const jsonContentType = { 'Content-Type': 'application/json' };
 
 const baseUrl = environment.apiUrl;
 
-type RecordsResponse<T = unknown> = { records: T[]; totalRecords: number };
-type RecordResponse<T = unknown> = { record: T };
+type RecordsResponse = { records: unknown[]; totalRecords: number };
+type RecordResponse = { record: unknown };
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ApiService<RecordType = unknown, FormDataType = unknown> {
+export class ApiService<DataType = unknown> {
   private url = new URL('', baseUrl).toString();
+  private dataMapping: { apiField: string; mappedField: keyof DataType }[] = [];
 
-  records = signal<RecordType[]>([]);
+  records = signal<DataType[]>([]);
   totalRecords = signal(0);
   isLoading = signal(false);
 
-  savedRecord = signal<RecordType | undefined>(undefined);
+  savedRecord = signal<DataType | undefined>(undefined);
   isSaving = signal(false);
 
-  deletedRecord = signal<RecordType | undefined>(undefined);
+  deletedRecord = signal<DataType | undefined>(undefined);
   isDeleting = signal(false);
 
-  setBasePath(path: string) {
-    const _path = path.startsWith('/') ? path.substring(1) : path;
+  constructor(options: {
+    basePath: string;
+    dataMapping?: { apiField: string; mappedField: keyof DataType }[];
+  }) {
+    const { basePath, dataMapping } = options;
+
+    const _path = basePath.startsWith('/') ? basePath.substring(1) : basePath;
     this.url = new URL(_path, baseUrl).toString();
+
+    if (dataMapping) {
+      this.dataMapping = dataMapping;
+    }
   }
 
   async get() {
     this.isLoading.set(true);
     try {
       const response = await fetch(this.url);
-      const { records, totalRecords }: RecordsResponse<RecordType> = await response.json();
+      const { records, totalRecords }: RecordsResponse = await response.json();
+      const data = records.map(data => this.mapFromApi(data));
+
       this.isLoading.set(false);
-      this.records.set(records);
+      this.records.set(data);
       this.totalRecords.set(totalRecords);
     } catch (error) {
       //  TODO: handle error
@@ -45,8 +53,8 @@ export class ApiService<RecordType = unknown, FormDataType = unknown> {
     }
   }
 
-  async create(data: FormDataType) {
-    const formData = this.mapFormData(data);
+  async create(data: Partial<DataType>) {
+    const formData = this.mapToApi(data);
 
     this.isSaving.set(true);
     try {
@@ -57,9 +65,11 @@ export class ApiService<RecordType = unknown, FormDataType = unknown> {
         },
         body: JSON.stringify(formData),
       });
-      const { record }: RecordResponse<RecordType> = await response.json();
+      const { record }: RecordResponse = await response.json();
+      const data = this.mapFromApi(record);
+
       this.isSaving.set(false);
-      this.savedRecord.set(record);
+      this.savedRecord.set(data);
       this.get();
     } catch (error) {
       //  TODO: handle error
@@ -67,9 +77,9 @@ export class ApiService<RecordType = unknown, FormDataType = unknown> {
     }
   }
 
-  async edit(id: string, data: FormDataType) {
+  async edit(id: string, data: Partial<DataType>) {
     const url = `${this.url}/${id}`;
-    const formData = this.mapFormData(data);
+    const formData = this.mapToApi(data);
 
     this.isSaving.set(true);
     try {
@@ -80,9 +90,11 @@ export class ApiService<RecordType = unknown, FormDataType = unknown> {
         },
         body: JSON.stringify(formData),
       });
-      const { record }: RecordResponse<RecordType> = await response.json();
+      const { record }: RecordResponse = await response.json();
+      const data = this.mapFromApi(record);
+
       this.isSaving.set(false);
-      this.savedRecord.set(record);
+      this.savedRecord.set(data);
       this.get();
     } catch (error) {
       // TODO: handle error
@@ -96,9 +108,11 @@ export class ApiService<RecordType = unknown, FormDataType = unknown> {
     this.isDeleting.set(true);
     try {
       const response = await fetch(url, { method: 'DELETE' });
-      const { record }: RecordResponse<RecordType> = await response.json();
+      const { record }: RecordResponse = await response.json();
+      const data = this.mapFromApi(record);
+
       this.isDeleting.set(false);
-      this.deletedRecord.set(record);
+      this.deletedRecord.set(data);
       this.get();
     } catch (error) {
       // TODO: handle error
@@ -106,8 +120,25 @@ export class ApiService<RecordType = unknown, FormDataType = unknown> {
     }
   }
 
-  /* This is meant to be overridden by child classes */
-  protected mapFormData(data: unknown) {
-    return data;
+  private mapFromApi(data: any) {
+    const mappedData: any = {};
+    for (const { apiField, mappedField } of this.dataMapping) {
+      if (data[apiField]) {
+        mappedData[mappedField] = data[apiField];
+      }
+    }
+
+    return mappedData as DataType;
+  }
+
+  private mapToApi(data: Partial<DataType>) {
+    const mappedData: any = {};
+    for (const { apiField, mappedField } of this.dataMapping) {
+      if (data[mappedField]) {
+        mappedData[apiField] = data[mappedField];
+      }
+    }
+
+    return mappedData;
   }
 }

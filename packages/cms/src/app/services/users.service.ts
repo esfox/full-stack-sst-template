@@ -1,23 +1,24 @@
 import { Injectable } from '@angular/core';
-import { UserFormDataType, UserType } from '../types/users.types';
+import { UserType } from '../types/users.types';
 import { ApiService } from './api.service';
-import { UserField } from '../constants/users.constants';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UsersService extends ApiService<UserType, UserFormDataType> {
+export class UsersService extends ApiService<UserType> {
   constructor() {
-    super();
-    super.setBasePath('/users');
-  }
-
-  protected override mapFormData(data: UserFormDataType): unknown {
-    return {
-      [UserField.Email]: data.email,
-      [UserField.Username]: data.username,
-      [UserField.FirstName]: data.firstName,
-      [UserField.LastName]: data.lastName,
-    };
+    super({
+      basePath: '/users',
+      dataMapping: [
+        { apiField: 'id', mappedField: 'id' },
+        { apiField: 'email', mappedField: 'email' },
+        { apiField: 'username', mappedField: 'username' },
+        { apiField: 'first_name', mappedField: 'firstName' },
+        { apiField: 'last_name', mappedField: 'lastName' },
+        { apiField: 'created_at', mappedField: 'createdAt' },
+        { apiField: 'updated_at', mappedField: 'updatedAt' },
+        { apiField: 'deleted_at', mappedField: 'deletedAt' },
+      ],
+    });
   }
 }
