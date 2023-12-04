@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, computed, effect } from '@angular/core';
+import { Component, OnInit, ViewChild, computed } from '@angular/core';
 import {
   BaseResourceComponent,
   injectionTokens,
@@ -17,40 +17,20 @@ import { UsersTableRowComponent } from './components/users-table-row/users-table
   standalone: true,
   imports: [
     CommonModule,
-    UsersTableRowComponent,
     MainLayoutComponent,
+    UsersTableRowComponent,
+    UserFormComponent,
     DialogComponent,
     PromptDialogComponent,
-    UserFormComponent,
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   providers: [
     { provide: injectionTokens.service, useClass: UsersService },
-    { provide: injectionTokens.getId, useValue: (record: UserType) => record.id },
+    { provide: injectionTokens.getId, useValue: (user: UserType) => user.id },
   ],
 })
 export class UsersComponent extends BaseResourceComponent<UserType> implements OnInit {
-  @ViewChild(UserFormComponent) userFormComponent!: UserFormComponent;
-
   recordFormDialogTitle = computed(() => `${this.recordToSave() ? 'Edit' : 'Create'} User`);
   recordToDeleteEmail = computed(() => this.recordToDelete()?.email);
-
-  constructor() {
-    super();
-
-    effect(() => {
-      const recordToSave = this.recordToSave();
-      if (recordToSave) {
-        this.userFormComponent.setValues<UserType>({
-          email: recordToSave.email,
-          username: recordToSave?.username,
-          firstName: recordToSave?.firstName ?? '',
-          lastName: recordToSave?.lastName ?? '',
-        });
-      } else {
-        this.userFormComponent.reset();
-      }
-    });
-  }
 }

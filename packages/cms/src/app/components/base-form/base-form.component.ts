@@ -16,8 +16,14 @@ export class BaseFormComponent {
   @Output('save') onSave = new EventEmitter();
 
   setValues<T extends { [key: string]: any } = any>(defaultData: Partial<T>) {
+    const data: any = {};
+    for (const field in this.form.controls) {
+      const defaultDataValue = defaultData[field];
+      data[field] = defaultDataValue ?? '';
+    }
+
     this.form.reset();
-    this.form.setValue(defaultData);
+    this.form.setValue(data);
   }
 
   reset() {

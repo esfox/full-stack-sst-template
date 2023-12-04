@@ -9,7 +9,7 @@ const baseUrl = environment.apiUrl;
 type RecordsResponse = { records: unknown[]; totalRecords: number };
 type RecordResponse = { record: unknown };
 
-export class ApiService<DataType = unknown> {
+export class ApiService<DataType> {
   private url = new URL('', baseUrl).toString();
   private dataMapping: { apiField: string; mappedField: keyof DataType }[] = [];
 
