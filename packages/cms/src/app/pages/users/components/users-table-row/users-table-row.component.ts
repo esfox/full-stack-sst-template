@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { BaseDataTableRowComponent } from '../../../../components/base-data-table-row/base-data-table-row.component';
-import { UserType } from '../../../../types/users.types';
+import { UserType } from '../../../../types';
 
 @Component({
   selector: 'app-users-table-row',

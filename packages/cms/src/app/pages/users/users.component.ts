@@ -8,7 +8,7 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
 import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { UsersService } from '../../services/users.service';
-import { UserType } from '../../types/users.types';
+import { UserType } from '../../types';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { UsersTableRowComponent } from './components/users-table-row/users-table-row.component';
 
