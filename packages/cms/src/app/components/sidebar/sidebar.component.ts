@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { menu } from '../../constants';
+import { routes } from '../../app.routes';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,5 +11,9 @@ import { menu } from '../../constants';
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  menu = menu;
+  menu = routes.map(route => ({
+    path: `/${route.path}`,
+    label: route.data?.label,
+    icon: route.data?.icon,
+  }));
 }

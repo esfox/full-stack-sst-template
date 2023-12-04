@@ -2,14 +2,14 @@
   <h1>CMS</h1>
 </div>
 <ul class="menu w-full p-0 [&_li>*]:rounded-none">
-  @for (item of menu; track item.route) {
+  @for (item of menu; track $index) {
     <li>
       <label
         role="link"
         for="sidebar"
         class="p-3"
         routerLinkActive="active"
-        [routerLink]="[item.route]"
+        [routerLink]="[item.path]"
         [routerLinkActiveOptions]="{ exact: true }"
       >
         @if (item.icon) {

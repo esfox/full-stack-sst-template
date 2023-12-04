@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { menu } from '../../constants';
+import { routes } from '../../app.routes';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 
 @Component({
@@ -12,5 +12,11 @@ import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.compo
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  menu = menu.filter(item => item.route !== '/');
+  menu = routes
+    .filter(route => route.path !== '')
+    .map(route => ({
+      path: `/${route.path}`,
+      label: route.data?.label,
+      icon: route.data?.icon,
+    }));
 }

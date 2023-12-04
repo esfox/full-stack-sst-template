@@ -7,7 +7,7 @@
     @for (item of menu; track $index) {
       <button
         class="w-32 h-32 flex flex-col items-center justify-center bg-[var(--base-150)] shadow-md rounded-xl text-lg font-bold transition-colors hover:bg-neutral hover:text-white"
-        [routerLink]="[item.route]"
+        [routerLink]="[item.path]"
       >
         @if (item.icon) {
           <div class="block h-8">
