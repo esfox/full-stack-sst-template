@@ -49,8 +49,7 @@
   (confirm)="deleteRecord()"
 >
   <p class="px-6 py-4">
-    Are you sure you want to delete the user with email:
-    <code>{{ recordToDeleteEmail() }}</code>
+    Are you sure you want to delete the user with email: <code>{{ recordToDeleteEmail() }}</code> ?
   </p>
   <ng-container dialog-confirm>
     @if (isDeleting()) {

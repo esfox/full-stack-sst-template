@@ -52,7 +52,7 @@
               <tr class="border-0">
                 <td>ID</td>
                 <td>
-                  <pre>{{ user.id }}</pre>
+                  <code>{{ user.id }}</code>
                 </td>
               </tr>
               <tr class="border-0">
@@ -61,7 +61,11 @@
               </tr>
               <tr class="border-0">
                 <td>Last updated at</td>
-                <td>{{ user.updatedAt ?? '-' }}</td>
+                @if (user.updatedAt) {
+                  <td>{{ user.updatedAt | date }}</td>
+                } @else {
+                  <td>-</td>
+                }
               </tr>
             </tbody>
           </table>

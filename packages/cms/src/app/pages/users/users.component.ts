@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, computed } from '@angular/core';
+import { Component, OnInit, computed } from '@angular/core';
 import {
   BaseResourceComponent,
   injectionTokens,
