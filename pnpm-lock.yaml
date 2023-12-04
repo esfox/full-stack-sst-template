@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@bread/cli':
         specifier: github:esfox/bread-cli
-        version: github.com/esfox/bread-cli/d07a6cba0200cf5df1884e244dfb64f3b614bd49
+        version: github.com/esfox/bread-cli/bcdcaa5095fc09645e730e37825fc2d14c50584d
       '@tsconfig/node18':
         specifier: ^18.2.2
         version: 18.2.2
@@ -14467,8 +14467,8 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  github.com/esfox/bread-cli/d07a6cba0200cf5df1884e244dfb64f3b614bd49:
-    resolution: {tarball: https://codeload.github.com/esfox/bread-cli/tar.gz/d07a6cba0200cf5df1884e244dfb64f3b614bd49}
+  github.com/esfox/bread-cli/bcdcaa5095fc09645e730e37825fc2d14c50584d:
+    resolution: {tarball: https://codeload.github.com/esfox/bread-cli/tar.gz/bcdcaa5095fc09645e730e37825fc2d14c50584d}
     name: '@bread/cli'
     version: 0.0.1
     hasBin: true

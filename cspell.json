@@ -21,6 +21,7 @@
     ".husky",
     "pnpm-lock.yaml",
     "package.json",
-    "tsconfig.tsbuildinfo"
+    "tsconfig.tsbuildinfo",
+    "templates"
   ]
 }
