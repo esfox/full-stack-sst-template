@@ -1,0 +1,76 @@
+<ng-template #content>
+  <tr class="border-b-0" [class]="{ 'bg-[var(--base-150)]': altBg }">
+    <td>
+      <div class="flex items-center gap-3">
+        <div class="font-bold">{{ role.name }}</div>
+      </div>
+    </td>
+
+    <td>{{ role.createdAt | date }}</td>
+
+    @if (role.updatedAt) {
+      <td>{{ role.updatedAt | date }}</td>
+    } @else {
+      <td>-</td>
+    }
+
+    @if (role.deletedAt) {
+      <td>{{ role.deletedAt | date }}</td>
+    } @else {
+      <td>-</td>
+    }
+
+    <td>
+      <details #menu class="dropdown dropdown-end">
+        <summary class="m-1 btn btn-sm btn-ghost">
+          <i class="fa fa-ellipsis-vertical"></i>
+        </summary>
+        <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+          <li>
+            <a (click)="toggleMenu(); toggleExpand()">
+              <i class="fa-solid fa-circle-info"></i>
+              Details
+            </a>
+          </li>
+          <li>
+            <a role="button" (click)="onEdit.emit(); toggleMenu()">
+              <i class="fa-solid fa-pen"></i>
+              Edit
+            </a>
+          </li>
+          <li>
+            <a class="text-error" (click)="onDelete.emit(); toggleMenu()">
+              <i class="fa-solid fa-trash"></i>
+              Delete
+            </a>
+          </li>
+        </ul>
+      </details>
+    </td>
+  </tr>
+  @if (isShowingExpandRow) {
+    <tr [class]="{ 'bg-[var(--base-150)]': altBg }">
+      <td class="align-top p-0" colspan="5">
+        <div class="relative">
+          <button
+            class="btn btn-ghost btn-circle btn-sm absolute top-2 right-2"
+            role="button"
+            (click)="toggleExpand()"
+          >
+            <i class="fa-solid fa-xmark fa-lg"></i>
+          </button>
+          <table>
+            <tbody>
+              <tr class="border-0">
+                <td>ID</td>
+                <td>
+                  <code>{{ role.id }}</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  }
+</ng-template>

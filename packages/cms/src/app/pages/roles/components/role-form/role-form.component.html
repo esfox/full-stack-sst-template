@@ -1,0 +1,22 @@
+<form #form="ngForm" id="role-form" class="px-6 pt-2" (ngSubmit)="save()" ngNativeValidate>
+  <label class="form-control w-full">
+    <div class="label">
+      <span class="label-text">Name</span>
+    </div>
+    <input type="text" class="input input-bordered w-full" name="name" ngModel />
+  </label>
+
+  <div class="flex justify-end gap-2 py-6">
+    <form method="dialog">
+      <button class="btn" [disabled]="isLoading">Cancel</button>
+    </form>
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      @if (isLoading) {
+        <span class="loading loading-spinner"></span>
+        Saving...
+      } @else {
+        Save
+      }
+    </button>
+  </div>
+</form>

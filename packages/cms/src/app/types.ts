@@ -8,3 +8,11 @@ export type UserType = {
   updatedAt?: string;
   deletedAt?: string;
 };
+
+export type RoleType = {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt?: string;
+  deletedAt?: string;
+};
