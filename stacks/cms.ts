@@ -1,5 +1,7 @@
-import { type StackContext, StaticSite, use } from 'sst/constructs';
+import { StaticSite, use, type StackContext } from 'sst/constructs';
 import { API } from './api';
+
+const localhostUrl = 'http://localhost:4200';
 
 export function CMS({ stack }: StackContext) {
   const { api } = use(API);
@@ -13,6 +15,6 @@ export function CMS({ stack }: StackContext) {
   });
 
   stack.addOutputs({
-    SiteUrl: site.url,
+    SiteUrl: site.url ?? localhostUrl,
   });
 }

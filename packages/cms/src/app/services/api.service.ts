@@ -2,7 +2,8 @@
 import { signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 
-const jsonContentType = { 'Content-Type': 'application/json' };
+const commonOptions: RequestInit = { credentials: 'include' };
+const commonHeaders: HeadersInit = { 'Content-Type': 'application/json' };
 
 const baseUrl = environment.apiUrl;
 
@@ -39,7 +40,8 @@ export class ApiService<DataType> {
   async get() {
     this.isLoading.set(true);
     try {
-      const response = await fetch(this.url);
+      const response = await fetch(this.url, commonOptions);
+
       const { records, totalRecords }: RecordsResponse = await response.json();
       const data = records.map(data => this.mapFromApi(data));
 
@@ -58,9 +60,10 @@ export class ApiService<DataType> {
     this.isSaving.set(true);
     try {
       const response = await fetch(this.url, {
+        ...commonOptions,
         method: 'POST',
         headers: {
-          ...jsonContentType,
+          ...commonHeaders,
         },
         body: JSON.stringify(formData),
       });
@@ -83,9 +86,10 @@ export class ApiService<DataType> {
     this.isSaving.set(true);
     try {
       const response = await fetch(url, {
+        ...commonOptions,
         method: 'PATCH',
         headers: {
-          ...jsonContentType,
+          ...commonHeaders,
         },
         body: JSON.stringify(formData),
       });
@@ -106,7 +110,10 @@ export class ApiService<DataType> {
 
     this.isDeleting.set(true);
     try {
-      const response = await fetch(url, { method: 'DELETE' });
+      const response = await fetch(url, {
+        ...commonOptions,
+        method: 'DELETE',
+      });
       const { record }: RecordResponse = await response.json();
       const data = this.mapFromApi(record);
 
