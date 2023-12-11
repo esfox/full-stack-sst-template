@@ -10,6 +10,19 @@ export class UsersService extends SqlService<Users> {
       deletedAtColumn: UserField.DeletedAt,
     });
   }
+
+  async findByEmail(email: string) {
+    let query = this.database
+      .selectFrom(this.table)
+      .selectAll()
+      .where(UserField.Email, '=', email)
+      .limit(1);
+
+    query = this.withoutSoftDeletes(query);
+
+    const record = await query.executeTakeFirst();
+    return record;
+  }
 }
 
 export const usersService = new UsersService();

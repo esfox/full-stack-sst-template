@@ -18,6 +18,8 @@ export enum UserField {
   Username = 'username',
   FirstName = 'first_name',
   LastName = 'last_name',
+  GoogleId = 'google_id',
+  GooglePictureUrl = 'google_picture_url',
   CreatedAt = 'created_at',
   UpdatedAt = 'updated_at',
   DeletedAt = 'deleted_at',

@@ -15,6 +15,8 @@ export interface Users {
   [UserField.Username]?: string | null;
   [UserField.FirstName]?: string | null;
   [UserField.LastName]?: string | null;
+  [UserField.GoogleId]?: string | null;
+  [UserField.GooglePictureUrl]?: string | null;
   [UserField.CreatedAt]: string;
   [UserField.UpdatedAt]?: string | null;
   [UserField.DeletedAt]?: string | null;

@@ -3,6 +3,8 @@ import middy from '@middy/core';
 import bodyParser from '@middy/http-json-body-parser';
 import { type APIGatewayProxyEventV2, type APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 import { StatusCodes } from 'http-status-codes';
+import { ApiHandler } from 'sst/node/api';
+import { useSession } from 'sst/node/auth';
 import { z, type ZodSchema } from 'zod';
 
 const commonHeaders = {
@@ -11,36 +13,38 @@ const commonHeaders = {
   'Content-Type': 'application/json',
 };
 
+type HandlerEvent<B, Q, H, P> = Omit<
+  APIGatewayProxyEventV2,
+  'body' | 'headers' | 'pathParameters' | 'queryStringParameters'
+> & {
+  body: B;
+  headers: H;
+  pathParameters: P;
+  queryStringParameters: Q;
+};
+
 type ApiResponse = Omit<APIGatewayProxyStructuredResultV2, 'body'> & {
   body: { [key: string]: unknown } | string;
 };
 
-type CreateHandlerParams<TBody, TQuery, THeaders, TPathParams> = {
+type CreateHandlerParams<B, Q, H, P> = {
   validationSchema?: {
-    body?: ZodSchema<TBody>;
-    headers?: ZodSchema<THeaders>;
-    pathParameters?: ZodSchema<TPathParams>;
-    queryStringParameters?: ZodSchema<TQuery>;
+    body?: ZodSchema<B>;
+    headers?: ZodSchema<H>;
+    pathParameters?: ZodSchema<P>;
+    queryStringParameters?: ZodSchema<Q>;
   };
-  handler: (
-    event: Omit<
-      APIGatewayProxyEventV2,
-      'body' | 'headers' | 'pathParameters' | 'queryStringParameters'
-    > & {
-      body: TBody;
-      headers: THeaders;
-      pathParameters: TPathParams;
-      queryStringParameters: TQuery;
-    }
-  ) => Promise<ApiResponse>;
+  handler: (event: HandlerEvent<B, Q, H, P>) => Promise<ApiResponse>;
   serializeBody?: boolean;
+  needsAuthorization?: boolean;
 };
 
-export function createHandler<TBody, TQuery, THeaders, TPathParams>({
+export function createHandler<B, Q, H, P>({
   validationSchema,
   handler,
   serializeBody = true,
-}: CreateHandlerParams<TBody, TQuery, THeaders, TPathParams>) {
+  needsAuthorization: needAuthentication = true,
+}: CreateHandlerParams<B, Q, H, P>) {
   const before: middy.MiddlewareFn<APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2> = ({
     event,
   }) => {
@@ -95,7 +99,28 @@ export function createHandler<TBody, TQuery, THeaders, TPathParams>({
     event.response.body = JSON.stringify(body);
   };
 
-  return middy(handler)
+  let newHandler = handler;
+  if (needAuthentication) {
+    // @ts-ignore we need to keep the typing of `handler` while still being able to wrap it in `ApiHandler`
+    newHandler = ApiHandler(async event => {
+      let authorized = false;
+      try {
+        const session = useSession();
+        authorized = session.type === 'user';
+      } catch (error) {
+        /* handle error */
+        console.error(error);
+      }
+
+      if (!authorized) {
+        return { statusCode: StatusCodes.UNAUTHORIZED };
+      }
+
+      return handler(event as HandlerEvent<B, Q, H, P>);
+    });
+  }
+
+  return middy(newHandler)
     .use(bodyParser({ disableContentTypeError: true }))
     .use({ before, after });
 }

@@ -10,7 +10,9 @@
     "daisyui",
     "fortawesome",
     "fontawesome",
-    "setenv"
+    "setenv",
+    "oidc",
+    "tokenset"
   ],
   "ignorePaths": [
     "node_modules/",

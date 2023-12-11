@@ -1,11 +1,10 @@
 import {
   type ComparisonOperatorExpression,
   type DeleteQueryBuilder,
-  type ExpressionBuilder,
   type InsertObject,
+  type Kysely,
   type SelectQueryBuilder,
   type UpdateQueryBuilder,
-  type UpdateResult,
   type Updateable,
 } from 'kysely';
 import { database } from '../database/connection';
@@ -18,12 +17,14 @@ import {
   type SortingParams,
 } from '../types';
 
-type SelectQuery = SelectQueryBuilder<Database, DatabaseTable, object>;
-type UpdateQuery = UpdateQueryBuilder<Database, DatabaseTable, DatabaseTable, UpdateResult>;
-type DeleteQuery = DeleteQueryBuilder<Database, DatabaseTable, object>;
+type SelectQuery = SelectQueryBuilder<Database, DatabaseTable, any>;
+type UpdateQuery = UpdateQueryBuilder<Database, DatabaseTable, DatabaseTable, any>;
+type DeleteQuery = DeleteQueryBuilder<Database, DatabaseTable, any>;
 type InsertData = InsertObject<Database, DatabaseTable>;
 
 export class SqlService<Entity> {
+  protected database: Kysely<Database> = database;
+
   protected table: DatabaseTable;
 
   protected primaryKeyColumn: DatabaseColumn = 'id' as DatabaseColumn;
@@ -58,8 +59,16 @@ export class SqlService<Entity> {
     }
   }
 
-  private withoutSoftDeletes = (expressionBuilder: ExpressionBuilder<Database, DatabaseTable>) =>
-    expressionBuilder(this.deletedAtColumn as DatabaseColumn, 'is', null);
+  protected withoutSoftDeletes(query: SelectQuery | UpdateQuery | DeleteQuery) {
+    let newQuery: any = query;
+    if (this.deletedAtColumn) {
+      newQuery = query.where(expression =>
+        expression(this.deletedAtColumn as DatabaseColumn, 'is', null)
+      );
+    }
+
+    return newQuery;
+  }
 
   protected static withPagination(query: SelectQuery, pagination: PaginationParams) {
     const { count, page } = pagination ?? {};
@@ -130,10 +139,7 @@ export class SqlService<Entity> {
     } = {}
   ) {
     let query = database.selectFrom(this.table);
-
-    if (this.deletedAtColumn) {
-      query = query.where(this.withoutSoftDeletes);
-    }
+    query = this.withoutSoftDeletes(query);
 
     const { pagination, filters, search, sorting } = args ?? {};
     if (filters) {
@@ -175,9 +181,7 @@ export class SqlService<Entity> {
       .where(this.primaryKeyColumn, '=', id)
       .limit(1);
 
-    if (this.deletedAtColumn) {
-      query = query.where(this.withoutSoftDeletes);
-    }
+    query = this.withoutSoftDeletes(query);
 
     const record = await query.executeTakeFirst();
 
@@ -208,9 +212,7 @@ export class SqlService<Entity> {
       .where(this.primaryKeyColumn, '=', id)
       .returningAll();
 
-    if (this.deletedAtColumn) {
-      query = query.where(this.withoutSoftDeletes);
-    }
+    query = this.withoutSoftDeletes(query);
 
     const record = await query.execute();
     if (!record && notFoundReturn) {
@@ -241,9 +243,7 @@ export class SqlService<Entity> {
       query = database.deleteFrom(this.table);
     }
 
-    if (this.deletedAtColumn) {
-      query = query.where(this.withoutSoftDeletes);
-    }
+    query = this.withoutSoftDeletes(query);
 
     const deletedRecords = await query
       .where(eb => eb(this.primaryKeyColumn, comparator, id))
