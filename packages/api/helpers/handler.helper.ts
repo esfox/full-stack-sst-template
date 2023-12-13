@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ApiHandler } from 'sst/node/api';
 import { useSession } from 'sst/node/auth';
 import { z, type ZodSchema } from 'zod';
+import { UserSessionField } from '../constants';
 
 const commonHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,7 +25,7 @@ type HandlerEvent<B, Q, H, P> = Omit<
 };
 
 type ApiResponse = Omit<APIGatewayProxyStructuredResultV2, 'body'> & {
-  body: { [key: string]: unknown } | string;
+  body?: { [key: string]: unknown } | string | unknown;
 };
 
 type CreateHandlerParams<B, Q, H, P> = {
@@ -106,7 +107,9 @@ export function createHandler<B, Q, H, P>({
       let authorized = false;
       try {
         const session = useSession();
-        authorized = session.type === 'user';
+        const isUserSession = session.type === 'user';
+        const hasUserId = UserSessionField.UserId in session.properties;
+        authorized = isUserSession && hasUserId;
       } catch (error) {
         /* handle error */
         console.error(error);

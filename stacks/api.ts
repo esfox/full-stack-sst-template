@@ -5,7 +5,8 @@ const apiHandlersPath = 'packages/api/handlers';
 
 /* In the meantime, while there is no domain yet, the site URL
   is hard-coded here to be used for the CORS settings and auth redirect. */
-const siteUrl = 'https://d2n4r35so6zs4r.cloudfront.net';
+const siteUrl = 'http://localhost:4200';
+// const siteUrl = 'https://d2n4r35so6zs4r.cloudfront.net';
 
 export function API({ stack }: StackContext) {
   const { DB_CONNECTION, GOOGLE_CLIENT_ID } = Secrets(stack);
@@ -26,6 +27,7 @@ export function API({ stack }: StackContext) {
       'DELETE /roles/{id}': `${apiHandlersPath}/roles.destroy`,
       'DELETE /roles/{id}/archive': `${apiHandlersPath}/roles.archive`,
 
+      'GET /me': `${apiHandlersPath}/users.me`,
       'GET /users': `${apiHandlersPath}/users.list`,
       'GET /users/{id}': `${apiHandlersPath}/users.get`,
       'POST /users': `${apiHandlersPath}/users.post`,
@@ -37,7 +39,7 @@ export function API({ stack }: StackContext) {
       allowCredentials: true,
       allowHeaders: ['content-type'],
       allowMethods: ['GET', 'DELETE', 'POST', 'PUT', 'PATCH', 'OPTIONS'],
-      allowOrigins: ['http://localhost:4200', siteUrl],
+      allowOrigins: ['http://localhost:4200' /* siteUrl */],
     },
   });
 

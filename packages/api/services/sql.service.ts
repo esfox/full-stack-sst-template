@@ -23,9 +23,9 @@ type DeleteQuery = DeleteQueryBuilder<Database, DatabaseTable, any>;
 type InsertData = InsertObject<Database, DatabaseTable>;
 
 export class SqlService<Entity> {
-  protected database: Kysely<Database> = database;
+  private table: DatabaseTable;
 
-  protected table: DatabaseTable;
+  protected database: Kysely<Database> = database;
 
   protected primaryKeyColumn: DatabaseColumn = 'id' as DatabaseColumn;
 

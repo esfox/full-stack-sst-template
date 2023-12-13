@@ -13,7 +13,7 @@ export class UsersService extends SqlService<Users> {
 
   async findByEmail(email: string) {
     let query = this.database
-      .selectFrom(this.table)
+      .selectFrom(TableName.Users)
       .selectAll()
       .where(UserField.Email, '=', email)
       .limit(1);
