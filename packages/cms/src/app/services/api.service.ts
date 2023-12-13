@@ -2,19 +2,18 @@
 import { signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 
-const commonOptions: RequestInit = { credentials: 'include' };
-const commonHeaders: HeadersInit = { 'Content-Type': 'application/json' };
-
 const baseUrl = environment.apiUrl;
 
-type RecordsResponse = { records: unknown[]; totalRecords: number };
-type RecordResponse = { record: unknown };
+export type RecordsResponse = { records: unknown[]; totalRecords: number };
+export type RecordResponse = { record: unknown };
 
 export class ApiService<DataType> {
-  private url = new URL('', baseUrl).toString();
+  protected url = new URL('', baseUrl).toString();
+  protected baseUrl = this.url;
   private dataMapping: { apiField: string; mappedField: keyof DataType }[] = [];
 
   records = signal<DataType[]>([]);
+  record = signal<DataType | undefined>(undefined);
   totalRecords = signal(0);
   isLoading = signal(false);
 
@@ -37,17 +36,40 @@ export class ApiService<DataType> {
     this.dataMapping = dataMapping ?? [];
   }
 
-  async get() {
-    this.isLoading.set(true);
-    try {
-      const response = await fetch(this.url, commonOptions);
+  protected fetch(url: string, options?: RequestInit) {
+    if (options?.method && ['POST', 'PATCH'].includes(options.method)) {
+      options.headers = {
+        'Content-Type': 'application/json',
+        ...(options?.headers ?? {}),
+      };
+    }
 
-      const { records, totalRecords }: RecordsResponse = await response.json();
-      const data = records.map(data => this.mapFromApi(data));
+    const inputUrl = new URL(url, baseUrl).toString();
+
+    return fetch(inputUrl, {
+      credentials: 'include',
+      ...options,
+    });
+  }
+
+  async get(id?: string) {
+    this.isLoading.set(true);
+
+    try {
+      if (id) {
+        const response = await this.fetch(`${this.url}/id`);
+        const { record }: RecordResponse = await response.json();
+        const data = this.mapFromApi(record);
+        this.record.set(data);
+      } else {
+        const response = await this.fetch(this.url);
+        const { records, totalRecords }: RecordsResponse = await response.json();
+        const data = records.map(data => this.mapFromApi(data));
+        this.records.set(data);
+        this.totalRecords.set(totalRecords);
+      }
 
       this.isLoading.set(false);
-      this.records.set(data);
-      this.totalRecords.set(totalRecords);
     } catch (error) {
       //  TODO: handle error
       console.error(error);
@@ -59,12 +81,8 @@ export class ApiService<DataType> {
 
     this.isSaving.set(true);
     try {
-      const response = await fetch(this.url, {
-        ...commonOptions,
+      const response = await this.fetch(this.url, {
         method: 'POST',
-        headers: {
-          ...commonHeaders,
-        },
         body: JSON.stringify(formData),
       });
       const { record }: RecordResponse = await response.json();
@@ -85,12 +103,8 @@ export class ApiService<DataType> {
 
     this.isSaving.set(true);
     try {
-      const response = await fetch(url, {
-        ...commonOptions,
+      const response = await this.fetch(url, {
         method: 'PATCH',
-        headers: {
-          ...commonHeaders,
-        },
         body: JSON.stringify(formData),
       });
       const { record }: RecordResponse = await response.json();
@@ -110,10 +124,7 @@ export class ApiService<DataType> {
 
     this.isDeleting.set(true);
     try {
-      const response = await fetch(url, {
-        ...commonOptions,
-        method: 'DELETE',
-      });
+      const response = await this.fetch(url, { method: 'DELETE' });
       const { record }: RecordResponse = await response.json();
       const data = this.mapFromApi(record);
 
@@ -126,7 +137,7 @@ export class ApiService<DataType> {
     }
   }
 
-  private mapFromApi(data: any) {
+  protected mapFromApi(data: any) {
     const mappedData: any = {};
     for (const { apiField, mappedField } of this.dataMapping) {
       if (data[apiField]) {
@@ -137,7 +148,7 @@ export class ApiService<DataType> {
     return mappedData as DataType;
   }
 
-  private mapToApi(data: Partial<DataType>) {
+  protected mapToApi(data: Partial<DataType>) {
     const mappedData: any = {};
     for (const { apiField, mappedField } of this.dataMapping) {
       if (data[mappedField]) {

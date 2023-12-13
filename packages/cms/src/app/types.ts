@@ -4,6 +4,8 @@ export type UserType = {
   username?: string;
   firstName?: string;
   lastName?: string;
+  googleId?: string;
+  googlePictureUrl?: string;
   createdAt: string;
   updatedAt?: string;
   deletedAt?: string;
