@@ -13,7 +13,7 @@ import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.compo
 })
 export class DashboardComponent {
   menu = routes
-    .filter(route => route.path !== '')
+    .filter(route => route.path !== '' && route.data)
     .map(route => ({
       path: `/${route.path}`,
       label: route.data?.label,

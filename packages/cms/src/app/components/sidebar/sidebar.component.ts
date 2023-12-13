@@ -18,11 +18,13 @@ import {
 export class SidebarComponent implements OnInit {
   usersService = inject(UsersService);
 
-  menu = routes.map(route => ({
-    path: `/${route.path}`,
-    label: route.data?.label,
-    icon: route.data?.icon,
-  }));
+  menu = routes
+    .filter(route => route.data)
+    .map(route => ({
+      path: `/${route.path}`,
+      label: route.data?.label,
+      icon: route.data?.icon,
+    }));
 
   currentUser = this.usersService.currentUser;
 
