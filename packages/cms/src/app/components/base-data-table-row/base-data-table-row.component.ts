@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   Output,
@@ -9,16 +8,16 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { DropdownMenuComponent, DropdownMenuItem } from '../dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-base-data-table-row',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DropdownMenuComponent],
   template: '',
 })
 export class BaseDataTableRowComponent {
   @ViewChild('content', { static: true }) template!: TemplateRef<unknown>;
-  @ViewChild('menu') menu!: ElementRef<HTMLDetailsElement>;
 
   @Input('alt-bg') altBg: boolean = false;
 
@@ -27,16 +26,31 @@ export class BaseDataTableRowComponent {
 
   isShowingExpandRow = false;
 
+  actionMenu: DropdownMenuItem[] = [
+    {
+      label: 'Details',
+      icon: 'fa-solid fa-circle-info',
+      onClick: () => this.toggleExpand(),
+    },
+    {
+      label: 'Edit',
+      icon: 'fa-solid fa-pen',
+      onClick: () => this.onEdit.emit(),
+    },
+    {
+      label: 'Delete',
+      icon: 'fa-solid fa-trash',
+      class: 'text-error hover:text-error',
+      onClick: () => this.onDelete.emit(),
+    },
+  ];
+
   constructor(private viewContainerRef: ViewContainerRef) {}
 
   ngOnInit() {
     if (this.template) {
       this.viewContainerRef.createEmbeddedView(this.template);
     }
-  }
-
-  toggleMenu() {
-    this.menu.nativeElement.open = !this.menu.nativeElement.open;
   }
 
   toggleExpand() {

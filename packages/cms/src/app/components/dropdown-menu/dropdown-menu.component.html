@@ -1,0 +1,17 @@
+<details #dropdown class="dropdown" [class]="class">
+  <summary [class]="toggleClass">
+    <ng-content />
+  </summary>
+  <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-48">
+    @for (item of menuItems; track $index) {
+      <li>
+        <a [class]="item.class" [routerLink]="item.link" (click)="handleItemClick(item)">
+          @if (item.icon) {
+            <i [class]="item.icon"></i>
+          }
+          {{ item.label }}
+        </a>
+      </li>
+    }
+  </ul>
+</details>

@@ -9,31 +9,13 @@
     <td>{{ user.firstName }}</td>
     <td>{{ user.lastName }}</td>
     <td>
-      <details #menu class="dropdown dropdown-end">
-        <summary class="m-1 btn btn-sm btn-ghost">
-          <i class="fa fa-ellipsis-vertical"></i>
-        </summary>
-        <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-          <li>
-            <a (click)="toggleMenu(); toggleExpand()">
-              <i class="fa-solid fa-circle-info"></i>
-              Details
-            </a>
-          </li>
-          <li>
-            <a role="button" (click)="onEdit.emit(); toggleMenu()">
-              <i class="fa-solid fa-pen"></i>
-              Edit
-            </a>
-          </li>
-          <li>
-            <a class="text-error" (click)="onDelete.emit(); toggleMenu()">
-              <i class="fa-solid fa-trash"></i>
-              Delete
-            </a>
-          </li>
-        </ul>
-      </details>
+      <app-dropdown-menu
+        class="dropdown-end"
+        toggle-class="m-1 btn btn-sm btn-ghost"
+        [items]="actionMenu"
+      >
+        <i class="fa fa-ellipsis-vertical"></i>
+      </app-dropdown-menu>
     </td>
   </tr>
   @if (isShowingExpandRow) {

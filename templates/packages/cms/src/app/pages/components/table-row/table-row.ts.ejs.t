@@ -8,12 +8,13 @@ to: packages/cms/src/app/pages/<%= h.inflection.dasherize(tableName) %>/componen
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { BaseDataTableRowComponent } from '../../../../components/base-data-table-row/base-data-table-row.component';
+import { DropdownMenuComponent } from '../../../../components/dropdown-menu/dropdown-menu.component';
 import { <%= pascalizedSingularName %>Type } from '../../../../types';
 
 @Component({
   selector: 'app-<%= dasherizedName %>-table-row',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, DropdownMenuComponent],
   templateUrl: './<%= dasherizedName %>-table-row.component.html',
   styleUrl: './<%= dasherizedName %>-table-row.component.scss',
 })
