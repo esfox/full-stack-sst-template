@@ -20,6 +20,8 @@ export function API({ stack }: StackContext) {
       'GET /docs': `${apiHandlersPath}/docs.handler`,
       'GET /swagger.json': `${apiHandlersPath}/docs.handler`,
 
+      'POST /logout': `${apiHandlersPath}/auth.logout`,
+
       'GET /roles': `${apiHandlersPath}/roles.list`,
       'GET /roles/{id}': `${apiHandlersPath}/roles.get`,
       'POST /roles': `${apiHandlersPath}/roles.post`,
