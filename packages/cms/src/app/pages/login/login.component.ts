@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +10,9 @@ import { environment } from '../../../environments/environment';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  loginUrl = new URL('auth/google/authorize', environment.apiUrl).toString();
+  authService = inject(AuthService);
+
+  loginUrl = this.authService.loginUrl;
 
   loading = false;
 }

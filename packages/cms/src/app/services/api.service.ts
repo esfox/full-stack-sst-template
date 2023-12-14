@@ -7,7 +7,7 @@ const baseUrl = environment.apiUrl;
 export type RecordsResponse = { records: unknown[]; totalRecords: number };
 export type RecordResponse = { record: unknown };
 
-export class ApiService<DataType> {
+export class ApiService<DataType = unknown> {
   protected url = new URL('', baseUrl).toString();
   protected baseUrl = this.url;
   private dataMapping: { apiField: string; mappedField: keyof DataType }[] = [];
@@ -25,18 +25,22 @@ export class ApiService<DataType> {
   deletedRecord = signal<DataType | undefined>(undefined);
   isDeleting = signal(false);
 
-  constructor(options: {
-    basePath: string;
+  constructor(options?: {
+    basePath?: string;
     dataMapping?: { apiField: string; mappedField: keyof DataType }[];
   }) {
-    const { basePath, dataMapping } = options;
+    const { basePath, dataMapping } = options ?? {};
 
-    const _path = basePath.startsWith('/') ? basePath.substring(1) : basePath;
-    this.url = new URL(_path, baseUrl).toString();
+    let path = '/';
+    if (basePath) {
+      path = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+    }
+
+    this.url = new URL(path, baseUrl).toString();
     this.dataMapping = dataMapping ?? [];
   }
 
-  protected fetch(url: string, options?: RequestInit) {
+  protected async fetch(url: string, options?: RequestInit) {
     if (options?.method && ['POST', 'PATCH'].includes(options.method)) {
       options.headers = {
         'Content-Type': 'application/json',
@@ -45,11 +49,17 @@ export class ApiService<DataType> {
     }
 
     const inputUrl = new URL(url, baseUrl).toString();
-
-    return fetch(inputUrl, {
+    const response = await fetch(inputUrl, {
       credentials: 'include',
       ...options,
     });
+
+    if (response.status === 401) {
+      const siteUrl = new URL(window.location.href).origin;
+      window.location.replace(new URL('/login', siteUrl));
+    }
+
+    return response;
   }
 
   async get(id?: string) {

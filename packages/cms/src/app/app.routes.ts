@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { LoginComponent } from './pages/login/login.component';
 import { RolesComponent } from './pages/roles/roles.component';
 import { UsersComponent } from './pages/users/users.component';
-import { LoginComponent } from './pages/login/login.component';
 
 type RouteData = { data?: { label?: string; icon?: string } };
 

@@ -7,6 +7,7 @@ import { ApiService, RecordResponse } from './api.service';
 })
 export class UsersService extends ApiService<UserType> {
   currentUser = signal<UserType | undefined>(undefined);
+  isLoadingCurrentUser = signal(false);
 
   constructor() {
     super({
@@ -27,14 +28,14 @@ export class UsersService extends ApiService<UserType> {
   }
 
   async getCurrentUser() {
-    this.isLoading.set(true);
+    this.isLoadingCurrentUser.set(true);
 
     try {
       const response = await this.fetch('/me');
       const { record }: RecordResponse = await response.json();
       const data = this.mapFromApi(record);
       this.currentUser.set(data);
-      this.isLoading.set(false);
+      this.isLoadingCurrentUser.set(false);
     } catch (error) {
       //  TODO: handle error
       console.error(error);

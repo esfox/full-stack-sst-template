@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { routes } from '../../app.routes';
+import { AuthService } from '../../services/auth.service';
 import { UsersService } from '../../services/users.service';
-import {
-  DropdownMenuComponent,
-  DropdownMenuItem as DropdownMenuItem,
-} from '../dropdown-menu/dropdown-menu.component';
+import { DropdownMenuComponent, DropdownMenuItem } from '../dropdown-menu/dropdown-menu.component';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,8 +13,10 @@ import {
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   usersService = inject(UsersService);
+  authService = inject(AuthService);
+  router = inject(Router);
 
   menu = routes
     .filter(route => route.data)
@@ -50,11 +50,7 @@ export class SidebarComponent implements OnInit {
       label: 'Logout',
       class: 'text-error hover:text-error',
       icon: 'fa-solid fa-right-from-bracket',
-      onClick: () => alert('todo: implement logout'),
+      onClick: () => this.authService.logout(),
     },
   ];
-
-  async ngOnInit() {
-    await this.usersService.getCurrentUser();
-  }
 }

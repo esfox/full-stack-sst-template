@@ -1,1 +1,8 @@
-<router-outlet />
+@if (isLoading()) {
+  <div class="h-full flex flex-col justify-center items-center">
+    <span class="w-14 h-14 loading loading-spinner loading-lg"></span>
+    <span class="mt-4 text-xl"> Loading... </span>
+  </div>
+} @else {
+  <router-outlet />
+}
