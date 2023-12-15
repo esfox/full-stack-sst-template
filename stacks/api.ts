@@ -30,6 +30,9 @@ export function API({ stack }: StackContext) {
       'PATCH /roles/{id}': `${apiHandlersPath}/roles.patch`,
       'DELETE /roles/{id}': `${apiHandlersPath}/roles.destroy`,
       'DELETE /roles/{id}/archive': `${apiHandlersPath}/roles.archive`,
+      'GET /roles/{id}/permissions': `${apiHandlersPath}/roles.getPermissions`,
+      'POST /roles/{id}/permissions': `${apiHandlersPath}/roles.addPermissions`,
+      'DELETE /roles/{id}/permissions': `${apiHandlersPath}/roles.removePermissions`,
 
       'GET /me': `${apiHandlersPath}/users.me`,
       'GET /users': `${apiHandlersPath}/users.list`,

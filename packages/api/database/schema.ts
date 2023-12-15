@@ -1,4 +1,4 @@
-import { TableName, PermissionField, RoleField, UserField } from './constants';
+import { PermissionField, RoleField, RolePermissionField, TableName, UserField } from './constants';
 
 export interface Permissions {
   [PermissionField.Id]: string;
@@ -14,6 +14,15 @@ export interface Roles {
   [RoleField.CreatedAt]: string;
   [RoleField.UpdatedAt]?: string | null;
   [RoleField.DeletedAt]?: string | null;
+}
+
+export interface RolesPermissions {
+  [RolePermissionField.Id]: string;
+  [RolePermissionField.RoleId]: string;
+  [RolePermissionField.PermissionId]: string;
+  [RolePermissionField.CreatedAt]: string;
+  [RolePermissionField.UpdatedAt]?: string | null;
+  [RolePermissionField.DeletedAt]?: string | null;
 }
 
 export interface Users {
@@ -33,5 +42,6 @@ export interface Users {
 export interface Database {
   [TableName.Permissions]: Permissions;
   [TableName.Roles]: Roles;
+  [TableName.RolesPermissions]: RolesPermissions;
   [TableName.Users]: Users;
 }

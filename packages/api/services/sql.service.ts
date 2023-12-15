@@ -17,9 +17,9 @@ import {
   type SortingParams,
 } from '../types';
 
-type SelectQuery = SelectQueryBuilder<Database, DatabaseTable, any>;
-type UpdateQuery = UpdateQueryBuilder<Database, DatabaseTable, DatabaseTable, any>;
-type DeleteQuery = DeleteQueryBuilder<Database, DatabaseTable, any>;
+type SelectQuery = SelectQueryBuilder<any, any, any>;
+type UpdateQuery = UpdateQueryBuilder<any, any, any, any>;
+type DeleteQuery = DeleteQueryBuilder<any, any, any>;
 type InsertData = InsertObject<Database, DatabaseTable>;
 
 export class SqlService<Entity> {
@@ -59,11 +59,13 @@ export class SqlService<Entity> {
     }
   }
 
-  protected withoutSoftDeletes(query: SelectQuery | UpdateQuery | DeleteQuery) {
+  protected withoutSoftDeletes(
+    query: SelectQuery | UpdateQueryBuilder<any, any, any, any> | DeleteQueryBuilder<any, any, any>
+  ) {
     let newQuery: any = query;
     if (this.deletedAtColumn) {
       newQuery = query.where(expression =>
-        expression(this.deletedAtColumn as DatabaseColumn, 'is', null)
+        expression(`${this.table}.${this.deletedAtColumn}`, 'is', null)
       );
     }
 

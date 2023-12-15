@@ -24,10 +24,6 @@ type HandlerEvent<B, Q, H, P> = Omit<
   queryStringParameters: Q;
 };
 
-type ApiResponse = Omit<APIGatewayProxyStructuredResultV2, 'body'> & {
-  body?: { [key: string]: unknown } | string | unknown;
-};
-
 type CreateHandlerParams<B, Q, H, P> = {
   validationSchema?: {
     body?: ZodSchema<B>;
@@ -38,6 +34,10 @@ type CreateHandlerParams<B, Q, H, P> = {
   handler: (event: HandlerEvent<B, Q, H, P>) => Promise<ApiResponse>;
   serializeBody?: boolean;
   needsAuthorization?: boolean;
+};
+
+type ApiResponse = Omit<APIGatewayProxyStructuredResultV2, 'body'> & {
+  body?: { [key: string]: unknown } | string | unknown;
 };
 
 export function createHandler<B, Q, H, P>({
@@ -51,6 +51,20 @@ export function createHandler<B, Q, H, P>({
   }) => {
     if (!validationSchema) {
       return;
+    }
+
+    if (event.queryStringParameters) {
+      const queryParams = event.queryStringParameters as { [key: string]: string | string[] };
+      for (const key in queryParams) {
+        const value = queryParams[key];
+        const hasMultipleValues = key.includes('[]') || value?.includes(',');
+        if (value && !Array.isArray(value) && hasMultipleValues) {
+          const newValue = value.split(',');
+          queryParams[key] = newValue;
+        }
+      }
+
+      event.queryStringParameters = queryParams as APIGatewayProxyEventV2['queryStringParameters'];
     }
 
     const validationResult = z.object(validationSchema).safeParse(event);
