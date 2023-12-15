@@ -1,5 +1,6 @@
 ---
 to: packages/api/services/<%= h.inflection.dasherize(tableName) %>.service.ts
+unless_exists: true
 ---
 <% const withUpdatedAt = columns.find(column => column.name === 'updated_at') %>
 <% const withDeletedAt = columns.find(column => column.name === 'deleted_at') %>

@@ -1,9 +1,11 @@
 ---
 to: packages/api/handlers/<%= h.inflection.dasherize(tableName) %>.ts
+unless_exists: true
 ---
 <% const dasherizedName = h.inflection.dasherize(tableName) %><% _%>
 <% const camelizedName = h.inflection.camelize(tableName, true) %><% _%>
 <% const singularPascalizedName = h.inflection.transform(tableName, [ 'camelize', 'singularize' ]) %><% _%>
+<% const timestampColumns = [ 'created_at', 'updated_at', 'deleted_at' ] %><% _%>
 <%_
   function getZodFunction(column) {
     const type = column.type;
@@ -60,7 +62,7 @@ export const post = createHandler({
   validationSchema: {
     body: z.object({
       <%_ for (const column of columns) { _%>
-        <%_ if (!column.hasDefaultValue && column.name !== primaryKey) { _%>
+        <%_ if (!column.hasDefaultValue && column.name !== primaryKey && !timestampColumns.some(tc => column.name.includes(tc))) { _%>
           [<%= singularPascalizedName %>Field.<%= h.inflection.camelize(column.name) %>]: z.<%= getZodFunction(column) %>,
         <%_ } _%>
       <%_ } _%>
@@ -80,7 +82,7 @@ export const patch = createHandler({
   validationSchema: {
     body: z.object({
       <%_ for (const column of columns) { _%>
-        <%_ if (column.name !== primaryKey) { _%>
+        <%_ if (column.name !== primaryKey && !timestampColumns.some(tc => column.name.includes(tc))) { _%>
           [<%= singularPascalizedName %>Field.<%= h.inflection.camelize(column.name) %>]: z.<%= getZodFunction(column) %>,
         <%_ } _%>
       <% } %>
