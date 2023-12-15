@@ -125,7 +125,7 @@ export class SqlService<Entity> {
       .insertInto(this.table)
       .values(insertData)
       .returningAll()
-      .execute();
+      .executeTakeFirst();
 
     return result as Entity;
   }
