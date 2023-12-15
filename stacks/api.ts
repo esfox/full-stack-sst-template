@@ -17,10 +17,12 @@ export function API({ stack }: StackContext) {
 
   const api = new Api(stack, 'API', {
     routes: {
-      'GET /docs': `${apiHandlersPath}/docs.handler`,
-      'GET /swagger.json': `${apiHandlersPath}/docs.handler`,
-
-      'POST /logout': `${apiHandlersPath}/auth.logout`,
+      'GET /permissions': `${apiHandlersPath}/permissions.list`,
+      'GET /permissions/{id}': `${apiHandlersPath}/permissions.get`,
+      'POST /permissions': `${apiHandlersPath}/permissions.post`,
+      'PATCH /permissions/{id}': `${apiHandlersPath}/permissions.patch`,
+      'DELETE /permissions/{id}': `${apiHandlersPath}/permissions.destroy`,
+      'DELETE /permissions/{id}/archive': `${apiHandlersPath}/permissions.archive`,
 
       'GET /roles': `${apiHandlersPath}/roles.list`,
       'GET /roles/{id}': `${apiHandlersPath}/roles.get`,
@@ -36,6 +38,11 @@ export function API({ stack }: StackContext) {
       'PATCH /users/{id}': `${apiHandlersPath}/users.patch`,
       'DELETE /users/{id}': `${apiHandlersPath}/users.destroy`,
       'DELETE /users/{id}/archive': `${apiHandlersPath}/users.archive`,
+
+      'POST /logout': `${apiHandlersPath}/auth.logout`,
+
+      'GET /docs': `${apiHandlersPath}/docs.handler`,
+      'GET /swagger.json': `${apiHandlersPath}/docs.handler`,
     },
     cors: {
       allowCredentials: true,
