@@ -18,3 +18,11 @@ export type RoleType = {
   updatedAt?: string;
   deletedAt?: string;
 };
+
+export type PermissionType = {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt?: string | null;
+  deletedAt?: string | null;
+};

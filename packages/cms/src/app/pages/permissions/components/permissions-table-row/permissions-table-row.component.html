@@ -1,0 +1,75 @@
+<ng-template #content>
+  <tr class="border-b-0" [class]="{ 'bg-[var(--base-150)]': altBg }">
+    <td>
+      <div class="flex items-center gap-3">
+        <div class="font-bold">{{ permission.name }}</div>
+      </div>
+    </td>
+
+    <td>{{ permission.createdAt | date }}</td>
+
+    @if (permission.updatedAt) {
+      <td>{{ permission.updatedAt | date }}</td>
+    } @else {
+      <td>-</td>
+    }
+
+    @if (permission.deletedAt) {
+      <td>{{ permission.deletedAt | date }}</td>
+    } @else {
+      <td>-</td>
+    }
+
+    <td>
+      <app-dropdown-menu
+        class="dropdown-end"
+        toggle-class="m-1 btn btn-sm btn-ghost"
+        [items]="actionMenu"
+      >
+        <i class="fa fa-ellipsis-vertical"></i>
+      </app-dropdown-menu>
+    </td>
+  </tr>
+  @if (isShowingExpandRow) {
+    <tr [class]="{ 'bg-[var(--base-150)]': altBg }">
+      <td class="align-top p-0" colspan="5">
+        <div class="relative">
+          <button
+            class="btn btn-ghost btn-circle btn-sm absolute top-2 right-2"
+            role="button"
+            (click)="toggleExpand()"
+          >
+            <i class="fa-solid fa-xmark fa-lg"></i>
+          </button>
+          <table>
+            <tbody>
+              <tr class="border-0">
+                <td>Id</td>
+                <td>
+                  <code>{{ permission.id }}</code>
+                </td>
+              </tr>
+              <tr class="border-0">
+                <td>Created at</td>
+                @if (permission.createdAt) {
+                  <td>{{ permission.createdAt | date }}</td>
+                } @else {
+                  <td>-</td>
+                }
+              </tr>
+
+              <tr class="border-0">
+                <td>Last updated at</td>
+                @if (permission.updatedAt) {
+                  <td>{{ permission.updatedAt | date }}</td>
+                } @else {
+                  <td>-</td>
+                }
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  }
+</ng-template>

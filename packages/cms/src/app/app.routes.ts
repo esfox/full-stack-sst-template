@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { PermissionsComponent } from './pages/permissions/permissions.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RolesComponent } from './pages/roles/roles.component';
 import { UsersComponent } from './pages/users/users.component';
@@ -33,6 +34,14 @@ export const routes: (Omit<Route, 'data'> & RouteData)[] = [
     data: {
       label: 'Roles',
       icon: 'fa fa-user-gear',
+    },
+  },
+  {
+    path: 'permissions',
+    component: PermissionsComponent,
+    data: {
+      label: 'Permissions',
+      icon: 'fa-solid fa-key',
     },
   },
 ];
