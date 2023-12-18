@@ -31,7 +31,7 @@ export function API({ stack }: StackContext) {
       'DELETE /roles/{id}': `${apiHandlersPath}/roles.destroy`,
       'DELETE /roles/{id}/archive': `${apiHandlersPath}/roles.archive`,
       'GET /roles/{id}/permissions': `${apiHandlersPath}/roles.getPermissions`,
-      'POST /roles/{id}/permissions': `${apiHandlersPath}/roles.addPermissions`,
+      'PUT /roles/{id}/permissions': `${apiHandlersPath}/roles.setPermissions`,
       'DELETE /roles/{id}/permissions': `${apiHandlersPath}/roles.removePermissions`,
 
       'GET /me': `${apiHandlersPath}/users.me`,

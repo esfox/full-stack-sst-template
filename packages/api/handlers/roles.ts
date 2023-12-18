@@ -112,7 +112,7 @@ export const getPermissions = createHandler({
   },
 });
 
-export const addPermissions = createHandler({
+export const setPermissions = createHandler({
   validationSchema: {
     pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
     body: z.string().uuid().array(),
@@ -121,15 +121,10 @@ export const addPermissions = createHandler({
     const roleId = pathParameters[RoleField.Id];
     const permissionIds = body;
 
-    const rolePermissionsData = permissionIds.map(permissionId => ({
-      [RolePermissionField.RoleId]: roleId,
-      [RolePermissionField.PermissionId]: permissionId,
-    }));
-
     try {
-      const records = await rolesPermissionsService.create({ data: rolePermissionsData });
+      const records = await rolesPermissionsService.setRolePermissions(roleId, permissionIds);
       return {
-        statusCode: StatusCodes.CREATED,
+        statusCode: StatusCodes.OK,
         body: { records },
       };
     } catch (error) {

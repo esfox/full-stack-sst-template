@@ -1,5 +1,6 @@
+import { Transaction } from 'kysely';
 import { PermissionField, RolePermissionField, TableName } from '../database/constants';
-import { type RolesPermissions } from '../database/schema';
+import { Database, type RolesPermissions } from '../database/schema';
 import { SqlService } from '../services/sql.service';
 
 export class RolesPermissionsService extends SqlService<RolesPermissions> {
@@ -15,8 +16,9 @@ export class RolesPermissionsService extends SqlService<RolesPermissions> {
     return Array.isArray(permissionIds) ? permissionIds : [permissionIds];
   }
 
-  async getPermissionsByRole(roleId: string) {
-    let query = this.database
+  private getRolePermissionsQuery(roleId: string, transaction?: Transaction<Database>) {
+    const source = transaction ?? this.database;
+    let query = source
       .selectFrom(TableName.RolesPermissions)
       .where(RolePermissionField.RoleId, '=', roleId)
       .leftJoin(
@@ -29,7 +31,48 @@ export class RolesPermissionsService extends SqlService<RolesPermissions> {
 
     query = this.withoutSoftDeletes(query);
 
-    const records = await query.execute();
+    return query;
+  }
+
+  async setRolePermissions(roleId: string, permissionIds: string[]) {
+    const values = permissionIds.map(permissionId => ({
+      [RolePermissionField.RoleId]: roleId,
+      [RolePermissionField.PermissionId]: permissionId,
+    }));
+
+    const result = await this.database.transaction().execute(async transaction => {
+      const withPermissions = permissionIds.length !== 0;
+
+      let deleteQuery = transaction
+        .deleteFrom(TableName.RolesPermissions)
+        .where(RolePermissionField.RoleId, '=', roleId)
+        .returningAll();
+
+      if (withPermissions) {
+        deleteQuery = deleteQuery.where(RolePermissionField.PermissionId, 'not in', permissionIds);
+      }
+
+      await deleteQuery.execute();
+
+      if (withPermissions) {
+        await transaction
+          .insertInto(TableName.RolesPermissions)
+          .values(values as any)
+          .onConflict(oc =>
+            oc.columns([RolePermissionField.RoleId, RolePermissionField.PermissionId]).doNothing()
+          )
+          .returningAll()
+          .execute();
+      }
+
+      return this.getRolePermissionsQuery(roleId, transaction).execute();
+    });
+
+    return result;
+  }
+
+  async getPermissionsByRole(roleId: string) {
+    const records = await this.getRolePermissionsQuery(roleId).execute();
     return records;
   }
 
