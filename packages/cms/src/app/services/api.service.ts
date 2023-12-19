@@ -1,4 +1,3 @@
-// TODO: HANDLE ERRORS!
 import { signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 
@@ -41,7 +40,7 @@ export class ApiService<DataType = unknown> {
   }
 
   protected async fetch(url: string, options?: RequestInit) {
-    if (options?.method && ['POST', 'PATCH'].includes(options.method)) {
+    if (options?.method && ['POST', 'PATCH', 'PUT'].includes(options.method)) {
       options.headers = {
         'Content-Type': 'application/json',
         ...(options?.headers ?? {}),
@@ -62,49 +61,49 @@ export class ApiService<DataType = unknown> {
     return response;
   }
 
+  protected async fetchWithBody(url: string, method: string, body: unknown) {
+    return this.fetch(url, {
+      method,
+      body: JSON.stringify(body),
+    });
+  }
+
   async get(id?: string) {
     this.isLoading.set(true);
 
-    try {
-      if (id) {
-        const response = await this.fetch(`${this.url}/id`);
-        const { record }: RecordResponse = await response.json();
-        const data = this.mapFromApi(record);
-        this.record.set(data);
-      } else {
-        const response = await this.fetch(this.url);
-        const { records, totalRecords }: RecordsResponse = await response.json();
-        const data = records.map(data => this.mapFromApi(data));
-        this.records.set(data);
-        this.totalRecords.set(totalRecords);
-      }
-
-      this.isLoading.set(false);
-    } catch (error) {
-      //  TODO: handle error
-      console.error(error);
+    if (id) {
+      const response = await this.fetch(`${this.url}/id`);
+      const { record }: RecordResponse = await response.json();
+      const data = this.mapFromApi(record);
+      this.record.set(data);
+    } else {
+      const response = await this.fetch(this.url);
+      const { records, totalRecords }: RecordsResponse = await response.json();
+      const data = records.map(data => this.mapFromApi(data));
+      this.records.set(data);
+      this.totalRecords.set(totalRecords);
     }
+
+    this.isLoading.set(false);
   }
 
   async create(data: Partial<DataType>) {
     const formData = this.mapToApi(data);
 
     this.isSaving.set(true);
-    try {
-      const response = await this.fetch(this.url, {
-        method: 'POST',
-        body: JSON.stringify(formData),
-      });
-      const { record }: RecordResponse = await response.json();
-      const data = this.mapFromApi(record);
 
-      this.isSaving.set(false);
-      this.savedRecord.set(data);
-      this.get();
-    } catch (error) {
-      //  TODO: handle error
-      console.error(error);
-    }
+    const response = await this.fetch(this.url, {
+      method: 'POST',
+      body: JSON.stringify(formData),
+    });
+    const { record }: RecordResponse = await response.json();
+    const createdRecord = record;
+
+    const mappedData = this.mapFromApi(createdRecord);
+    this.isSaving.set(false);
+    this.savedRecord.set(mappedData);
+
+    return mappedData;
   }
 
   async edit(id: string, data: Partial<DataType>) {
@@ -112,42 +111,38 @@ export class ApiService<DataType = unknown> {
     const formData = this.mapToApi(data);
 
     this.isSaving.set(true);
-    try {
-      const response = await this.fetch(url, {
-        method: 'PATCH',
-        body: JSON.stringify(formData),
-      });
-      const { record }: RecordResponse = await response.json();
-      const data = this.mapFromApi(record);
 
-      this.isSaving.set(false);
-      this.savedRecord.set(data);
-      this.get();
-    } catch (error) {
-      // TODO: handle error
-      console.error(error);
-    }
+    const response = await this.fetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify(formData),
+    });
+    const { record }: RecordResponse = await response.json();
+    const editedRecord = record;
+
+    const mappedData = this.mapFromApi(editedRecord);
+
+    this.isSaving.set(false);
+    this.savedRecord.set(mappedData);
+
+    return mappedData;
   }
 
   async delete(id: string) {
     const url = `${this.url}/${id}`;
 
     this.isDeleting.set(true);
-    try {
-      const response = await this.fetch(url, { method: 'DELETE' });
-      const { record }: RecordResponse = await response.json();
-      const data = this.mapFromApi(record);
 
-      this.isDeleting.set(false);
-      this.deletedRecord.set(data);
-      this.get();
-    } catch (error) {
-      // TODO: handle error
-      console.error(error);
-    }
+    const response = await this.fetch(url, { method: 'DELETE' });
+    const { record }: RecordResponse = await response.json();
+    const mappedData = this.mapFromApi(record);
+
+    this.isDeleting.set(false);
+    this.deletedRecord.set(mappedData);
+
+    return mappedData;
   }
 
-  protected mapFromApi(data: any) {
+  mapFromApi(data: any) {
     const mappedData: any = {};
     for (const { apiField, mappedField } of this.dataMapping) {
       if (data[apiField]) {
@@ -158,7 +153,7 @@ export class ApiService<DataType = unknown> {
     return mappedData as DataType;
   }
 
-  protected mapToApi(data: Partial<DataType>) {
+  mapToApi(data: Partial<DataType>) {
     const mappedData: any = {};
     for (const { apiField, mappedField } of this.dataMapping) {
       if (data[mappedField]) {
