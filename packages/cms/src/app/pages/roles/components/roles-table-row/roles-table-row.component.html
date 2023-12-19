@@ -32,26 +32,40 @@
   </tr>
   @if (isShowingExpandRow) {
     <tr [class]="{ 'bg-[var(--base-150)]': altBg }">
-      <td class="align-top p-0" colspan="5">
-        <div class="relative">
-          <button
-            class="btn btn-ghost btn-circle btn-sm absolute top-2 right-2"
-            role="button"
-            (click)="toggleExpand()"
-          >
-            <i class="fa-solid fa-xmark fa-lg"></i>
-          </button>
-          <table>
-            <tbody>
-              <tr class="border-0">
-                <td>ID</td>
-                <td>
-                  <code>{{ role.id }}</code>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <td class="align-top p-0 relative" colspan="5">
+        <button
+          class="btn btn-ghost btn-circle btn-sm absolute top-2 right-2"
+          role="button"
+          (click)="toggleExpand()"
+        >
+          <i class="fa-solid fa-xmark fa-lg"></i>
+        </button>
+        <table class="w-full">
+          <tbody>
+            <tr class="border-0">
+              <td>ID</td>
+              <td>
+                <code>{{ role.id }}</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Permissions</td>
+              <td>
+                @if (isLoadingPermissions) {
+                  <span class="loading loading-spinner"></span>
+                } @else if (rolePermissions?.length === 0) {
+                  -
+                } @else if (rolePermissions) {
+                  <ul class="flex gap-2">
+                    @for (permission of rolePermissions; track $index) {
+                      <li class="bg-base-200 px-3 py-2 rounded-lg">{{ permission.name }}</li>
+                    }
+                  </ul>
+                }
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </td>
     </tr>
   }
