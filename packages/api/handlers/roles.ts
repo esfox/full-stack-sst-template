@@ -2,100 +2,35 @@ import { StatusCodes } from 'http-status-codes';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 import { PostgresErrorCode } from '../constants';
-import { RoleField, RolePermissionField } from '../database/constants';
+import { RoleField } from '../database/constants';
 import { createHandler } from '../helpers/handler.helper';
 import { rolesPermissionsService } from '../services/roles-permissions.service';
 import { rolesService } from '../services/roles.service';
+import {
+  createArchiveHandler,
+  createDestroyHandler,
+  createGetHandler,
+  createListHandler,
+  createPatchHandler,
+  createPostHandler,
+} from './common';
 
-export const list = createHandler({
-  handler: async () => {
-    const { records, totalRecords } = await rolesService.findAll();
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { records, totalRecords },
-    };
-  },
-});
-
-export const get = createHandler({
-  validationSchema: {
-    pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
-  },
-  handler: async ({ pathParameters }) => {
-    const id = pathParameters[RoleField.Id];
-    const record = await rolesService.findOne({ id });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
-
-export const post = createHandler({
-  validationSchema: {
-    body: z.object({
-      [RoleField.Name]: z.string().trim(),
-    }),
-  },
-  handler: async ({ body }) => {
-    const record = await rolesService.create({ data: body });
-
-    return {
-      statusCode: StatusCodes.CREATED,
-      body: { record },
-    };
-  },
-});
-
-export const patch = createHandler({
-  validationSchema: {
-    body: z.object({
-      [RoleField.Name]: z.string().trim(),
-    }),
-    pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
-  },
-  handler: async ({ body, pathParameters }) => {
-    const id = pathParameters[RoleField.Id];
-    const record = await rolesService.update({ id, data: body });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
-
-export const destroy = createHandler({
-  validationSchema: {
-    pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
-  },
-  handler: async ({ pathParameters }) => {
-    const id = pathParameters[RoleField.Id];
-    const record = await rolesService.delete({ id });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
-
-export const archive = createHandler({
-  validationSchema: {
-    pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
-  },
-  handler: async ({ pathParameters }) => {
-    const id = pathParameters[RoleField.Id];
-    const record = await rolesService.delete({ id, softDelete: true });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
+export const list = createListHandler(rolesService);
+export const get = createGetHandler(rolesService);
+export const post = createPostHandler(
+  rolesService,
+  z.object({
+    [RoleField.Name]: z.string().trim(),
+  })
+);
+export const patch = createPatchHandler(
+  rolesService,
+  z.object({
+    [RoleField.Name]: z.string().trim().optional(),
+  })
+);
+export const destroy = createDestroyHandler(rolesService);
+export const archive = createArchiveHandler(rolesService);
 
 export const getPermissions = createHandler({
   validationSchema: {

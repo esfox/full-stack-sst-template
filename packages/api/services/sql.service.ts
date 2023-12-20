@@ -22,7 +22,7 @@ type UpdateQuery = UpdateQueryBuilder<any, any, any, any>;
 type DeleteQuery = DeleteQueryBuilder<any, any, any>;
 type InsertData = InsertObject<Database, DatabaseTable>;
 
-export class SqlService<Entity> {
+export class SqlService<Entity = unknown> {
   private table: DatabaseTable;
 
   protected database: Kysely<Database> = database;

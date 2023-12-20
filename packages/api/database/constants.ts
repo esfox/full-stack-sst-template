@@ -1,10 +1,10 @@
 export enum TableName {
   RolesPermissions = 'roles_permissions',
-
   Permissions = 'permissions',
   Roles = 'roles',
   Users = 'users',
 }
+
 export enum RolePermissionField {
   Id = 'id',
   RoleId = 'role_id',
