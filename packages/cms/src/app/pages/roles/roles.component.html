@@ -44,7 +44,7 @@
 <app-dialog #recordFormDialog [title]="recordFormDialogTitle()">
   <app-role-form
     #recordForm
-    [loading]="isSavingWithPermissions"
+    [loading]="isSavingWithPermissions()"
     (save)="saveWithPermissions($event)"
   />
 </app-dialog>

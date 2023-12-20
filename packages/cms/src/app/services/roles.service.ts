@@ -11,7 +11,7 @@ export class RolesService extends ApiService<RoleType> {
 
   rolePermissionsMap: { [roleId: string]: PermissionType[] } = {};
 
-  isSavingWithPermissions = false;
+  isSavingWithPermissions = signal(false);
 
   constructor() {
     super({
@@ -64,7 +64,7 @@ export class RolesService extends ApiService<RoleType> {
   }) {
     const { role, permissions, roleId } = data;
 
-    this.isSavingWithPermissions = true;
+    this.isSavingWithPermissions.set(true);
 
     let savedRole;
     if (roleId) {
@@ -77,7 +77,7 @@ export class RolesService extends ApiService<RoleType> {
     const permissionIds = permissions.map(permission => permission.id);
     await this.fetchWithBody(this.getRolePermissionsUrl(savedRoleId), 'PUT', permissionIds);
 
-    this.isSavingWithPermissions = false;
+    this.isSavingWithPermissions.set(false);
     delete this.rolePermissionsMap[savedRoleId];
   }
 }
