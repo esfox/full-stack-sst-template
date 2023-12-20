@@ -26,107 +26,40 @@ unless_exists: true
   }
 _%>
 
-import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
 import { <%= singularPascalizedName %>Field } from '../database/constants';
-import { createHandler } from '../helpers/handler.helper';
 import { <%= camelizedName %>Service } from '../services/<%= dasherizedName %>.service';
+import {
+  createArchiveHandler,
+  createDestroyHandler,
+  createGetHandler,
+  createListHandler,
+  createPatchHandler,
+  createPostHandler,
+} from './common';
 
-export const list = createHandler({
-  handler: async () => {
-    const { records, totalRecords } = await <%= camelizedName %>Service.findAll();
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { records, totalRecords },
-    };
-  },
-});
-
-export const get = createHandler({
-  validationSchema: {
-    pathParameters: z.object({ [<%= singularPascalizedName %>Field.Id]: z.string().uuid() }),
-  },
-  handler: async ({ pathParameters }) => {
-    const id = pathParameters[<%= singularPascalizedName %>Field.Id];
-    const record = await <%= camelizedName %>Service.findOne({ id });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
-
-export const post = createHandler({
-  validationSchema: {
-    body: z.object({
-      <%_ for (const column of columns) { _%>
-        <%_ if (!column.hasDefaultValue && column.name !== primaryKey && !timestampColumns.some(tc => column.name.includes(tc))) { _%>
-          [<%= singularPascalizedName %>Field.<%= h.inflection.camelize(column.name) %>]: z.<%= getZodFunction(column) %>,
-        <%_ } _%>
+export const list = createListHandler(<%= camelizedName %>Service);
+export const get = createGetHandler(<%= camelizedName %>Service);
+export const post = createPostHandler(
+  <%= camelizedName %>Service,
+  z.object({
+    <%_ for (const column of columns) { _%>
+      <%_ if (!column.hasDefaultValue && column.name !== primaryKey && !timestampColumns.some(tc => column.name.includes(tc))) { _%>
+        [<%= singularPascalizedName %>Field.<%= h.inflection.camelize(column.name) %>]: z.<%= getZodFunction(column) %>,
       <%_ } _%>
-    }),
-  },
-  handler: async ({ body }) => {
-    const record = await <%= camelizedName %>Service.create({ data: body });
-
-    return {
-      statusCode: StatusCodes.CREATED,
-      body: { record },
-    };
-  },
-});
-
-export const patch = createHandler({
-  validationSchema: {
-    body: z.object({
-      <%_ for (const column of columns) { _%>
-        <%_ if (column.name !== primaryKey && !timestampColumns.some(tc => column.name.includes(tc))) { _%>
-          [<%= singularPascalizedName %>Field.<%= h.inflection.camelize(column.name) %>]: z.<%= getZodFunction(column) %>,
-        <%_ } _%>
-      <% } %>
-    }),
-    pathParameters: z.object({ [<%= singularPascalizedName %>Field.Id]: z.string().uuid() }),
-  },
-  handler: async ({ body, pathParameters }) => {
-    const id = pathParameters[<%= singularPascalizedName %>Field.Id];
-    const record = await <%= camelizedName %>Service.update({ id, data: body });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
-
-export const destroy = createHandler({
-  validationSchema: {
-    pathParameters: z.object({ [<%= singularPascalizedName %>Field.Id]: z.string().uuid() }),
-  },
-  handler: async ({ pathParameters }) => {
-    const id = pathParameters[<%= singularPascalizedName %>Field.Id];
-    const record = await <%= camelizedName %>Service.delete({ id });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
-
-export const archive = createHandler({
-  validationSchema: {
-    pathParameters: z.object({ [<%= singularPascalizedName %>Field.Id]: z.string().uuid() }),
-  },
-  handler: async ({ pathParameters }) => {
-    const id = pathParameters[<%= singularPascalizedName %>Field.Id];
-    const record = await <%= camelizedName %>Service.delete({ id, softDelete: true });
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: { record },
-    };
-  },
-});
+    <%_ } _%>
+  })
+);
+export const patch = createPatchHandler(
+  <%= camelizedName %>Service,
+  z.object({
+    <%_ for (const column of columns) { _%>
+      <%_ if (!column.hasDefaultValue && column.name !== primaryKey && !timestampColumns.some(tc => column.name.includes(tc))) { _%>
+        [<%= singularPascalizedName %>Field.<%= h.inflection.camelize(column.name) %>]: z.<%= getZodFunction(column) %>,
+      <%_ } _%>
+    <%_ } _%>
+  })
+);
+export const destroy = createDestroyHandler(<%= camelizedName %>Service);
+export const archive = createArchiveHandler(<%= camelizedName %>Service);
 
