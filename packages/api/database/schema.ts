@@ -1,4 +1,11 @@
-import { PermissionField, RoleField, RolePermissionField, TableName, UserField } from './constants';
+import {
+  PermissionField,
+  RoleField,
+  RolePermissionField,
+  TableName,
+  UserField,
+  UserRoleField,
+} from './constants';
 
 export interface Permissions {
   [PermissionField.Id]: string;
@@ -39,9 +46,19 @@ export interface Users {
   [UserField.GooglePictureUrl]?: string | null;
 }
 
+export interface UsersRoles {
+  [UserRoleField.Id]: string;
+  [UserRoleField.UserId]: string;
+  [UserRoleField.RoleId]: string;
+  [UserRoleField.CreatedAt]: string;
+  [UserRoleField.UpdatedAt]?: string | null;
+  [UserRoleField.DeletedAt]?: string | null;
+}
+
 export interface Database {
   [TableName.Permissions]: Permissions;
   [TableName.Roles]: Roles;
   [TableName.RolesPermissions]: RolesPermissions;
   [TableName.Users]: Users;
+  [TableName.UsersRoles]: UsersRoles;
 }

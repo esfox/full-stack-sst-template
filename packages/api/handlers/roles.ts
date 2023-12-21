@@ -38,7 +38,7 @@ export const getPermissions = createHandler({
   },
   handler: async ({ pathParameters }) => {
     const id = pathParameters[RoleField.Id];
-    const records = await rolesPermissionsService.getPermissionsByRole(id);
+    const records = await rolesPermissionsService.getRolePermissions(id);
 
     return {
       statusCode: StatusCodes.OK,

@@ -12,10 +12,6 @@ export class RolesPermissionsService extends SqlService<RolesPermissions> {
     });
   }
 
-  private parsePermissionIds(permissionIds: string | string[]) {
-    return Array.isArray(permissionIds) ? permissionIds : [permissionIds];
-  }
-
   private getRolePermissionsQuery(roleId: string, transaction?: Transaction<Database>) {
     const source = transaction ?? this.database;
     let query = source
@@ -71,13 +67,13 @@ export class RolesPermissionsService extends SqlService<RolesPermissions> {
     return result;
   }
 
-  async getPermissionsByRole(roleId: string) {
+  async getRolePermissions(roleId: string) {
     const records = await this.getRolePermissionsQuery(roleId).execute();
     return records;
   }
 
   async deleteByIds(roleId: string, permissionIds: string | string[]) {
-    const permissionIdsArray = this.parsePermissionIds(permissionIds);
+    const permissionIdsArray = Array.isArray(permissionIds) ? permissionIds : [permissionIds];
 
     let query = this.database
       .deleteFrom(TableName.RolesPermissions)

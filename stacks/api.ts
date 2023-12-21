@@ -41,6 +41,8 @@ export function API({ stack }: StackContext) {
       'PATCH /users/{id}': `${apiHandlersPath}/users.patch`,
       'DELETE /users/{id}': `${apiHandlersPath}/users.destroy`,
       'DELETE /users/{id}/archive': `${apiHandlersPath}/users.archive`,
+      'GET /users/{id}/roles': `${apiHandlersPath}/users.getRoles`,
+      'PUT /users/{id}/roles': `${apiHandlersPath}/users.setRoles`,
 
       'POST /logout': `${apiHandlersPath}/auth.logout`,
 

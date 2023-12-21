@@ -1,9 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
+import { DatabaseError } from 'pg';
 import { useSession } from 'sst/node/auth';
 import { z } from 'zod';
-import { UserSessionField } from '../constants';
+import { PostgresErrorCode, UserSessionField } from '../constants';
 import { UserField } from '../database/constants';
 import { createHandler } from '../helpers/handler.helper';
+import { usersRolesService } from '../services/users-roles.service';
 import { usersService } from '../services/users.service';
 import {
   createArchiveHandler,
@@ -52,5 +54,53 @@ export const me = createHandler({
       statusCode: StatusCodes.OK,
       body: { record: user },
     };
+  },
+});
+
+export const getRoles = createHandler({
+  validationSchema: {
+    pathParameters: z.object({ id: z.string().uuid() }),
+  },
+  handler: async ({ pathParameters }) => {
+    const id = pathParameters.id;
+    const records = await usersRolesService.getUserRoles(id);
+
+    return {
+      statusCode: StatusCodes.OK,
+      body: { records },
+    };
+  },
+});
+
+export const setRoles = createHandler({
+  validationSchema: {
+    pathParameters: z.object({ id: z.string().uuid() }),
+    body: z.string().uuid().array(),
+  },
+  handler: async ({ pathParameters, body }) => {
+    const userId = pathParameters.id;
+    const roleIds = body;
+
+    try {
+      const records = await usersRolesService.setUserRoles(userId, roleIds);
+      return {
+        statusCode: StatusCodes.OK,
+        body: { records },
+      };
+    } catch (error) {
+      if (!(error instanceof DatabaseError)) {
+        throw error;
+      }
+
+      switch (error.code) {
+        case PostgresErrorCode.ForeignKeyViolation:
+        case PostgresErrorCode.UniqueViolation:
+          return { statusCode: StatusCodes.BAD_REQUEST };
+
+        default:
+          console.error(error);
+          return { statusCode: StatusCodes.INTERNAL_SERVER_ERROR };
+      }
+    }
   },
 });
