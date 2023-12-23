@@ -52,6 +52,35 @@
     />
   </label>
 
+  <label class="form-control w-full">
+    <div class="label">
+      <span class="label-text">Roles</span>
+    </div>
+
+    @if (isLoadingRoleOptions() || isLoadingRoles) {
+      <span class="loading loading-spinner mx-auto my-2"></span>
+    } @else {
+      <select class="select select-bordered join-item w-full" (change)="addRole($event)">
+        <option selected disabled value="">Select role to add</option>
+        @for (role of getRoleOptions(); track $index) {
+          <option [value]="role.id">{{ role.name }}</option>
+        }
+      </select>
+    }
+  </label>
+  <ul class="flex flex-wrap gap-2 mt-3">
+    @if (!isLoadingRoleOptions() && !isLoadingRoles) {
+      @for (role of selectedRoles; track $index) {
+        <li>
+          <button type="button" class="btn btn-sm p-0 min-h-2" (click)="removeRole(role)">
+            <span class="px-3 py-2 mb-[2px] border-r border-base-300">{{ role.name }}</span>
+            <i class="fa fa-xmark fa-xs pe-2 opacity-50"></i>
+          </button>
+        </li>
+      }
+    }
+  </ul>
+
   <div class="flex justify-end gap-2 py-6">
     <form method="dialog">
       <button class="btn" [disabled]="isLoading">Cancel</button>

@@ -9,7 +9,7 @@ import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dia
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { PermissionsService } from '../../services/permissions.service';
 import { RolesService } from '../../services/roles.service';
-import { PermissionType, RoleType } from '../../types';
+import { PermissionType, RoleType, UserType } from '../../types';
 import { RoleFormComponent } from './components/role-form/role-form.component';
 import { RolesTableRowComponent } from './components/roles-table-row/roles-table-row.component';
 
@@ -40,14 +40,14 @@ export class RolesComponent extends BaseResourceComponent<RoleType> implements O
 
   isSavingWithPermissions = this.rolesService.isSavingWithPermissions;
 
-  async saveWithPermissions(data: { role: Partial<RoleType>; permissions: PermissionType[] }) {
-    const { role, permissions } = data;
+  async saveWithPermissions(data: { user: Partial<UserType>; roles: RoleType[] }) {
+    const { user, roles } = data;
     const recordToSave = this.recordToSave();
 
     try {
       await this.rolesService.saveWithPermissions({
-        permissions,
-        role,
+        roles,
+        user,
         roleId: recordToSave?.id,
       });
     } catch (error) {
