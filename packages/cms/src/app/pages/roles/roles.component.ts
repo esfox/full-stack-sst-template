@@ -46,8 +46,8 @@ export class RolesComponent extends BaseResourceComponent<RoleType> implements O
 
     try {
       await this.rolesService.saveWithPermissions({
-        permissions,
         role,
+        permissions,
         roleId: recordToSave?.id,
       });
     } catch (error) {

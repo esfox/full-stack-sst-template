@@ -19,7 +19,6 @@ export class RoleFormComponent extends BaseFormComponent {
 
   isLoadingPermissionOptions = this.permissionsService.isLoading;
   isLoadingPermissions = false;
-  permissionOptions: PermissionType[] = [];
   selectedPermissions: PermissionType[] = [];
 
   override save() {

@@ -1,8 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { BaseDataTableRowComponent } from '../../../../components/base-data-table-row/base-data-table-row.component';
 import { DropdownMenuComponent } from '../../../../components/dropdown-menu/dropdown-menu.component';
-import { UserType } from '../../../../types';
+import { UsersService } from '../../../../services/users.service';
+import { RoleType, UserType } from '../../../../types';
 
 @Component({
   selector: 'app-users-table-row',
@@ -13,4 +14,26 @@ import { UserType } from '../../../../types';
 })
 export class UsersTableRowComponent extends BaseDataTableRowComponent {
   @Input() user!: UserType;
+
+  usersService = inject(UsersService);
+
+  isLoadingRoles = false;
+  userRoles: RoleType[] | undefined = undefined;
+
+  override async toggleExpand() {
+    super.toggleExpand();
+
+    if (!this.isShowingExpandRow || this.userRoles) {
+      return;
+    }
+
+    this.isLoadingRoles = true;
+    const roles = await this.usersService.getRoles(this.user.id);
+    this.isLoadingRoles = false;
+    if (!roles) {
+      return;
+    }
+
+    this.userRoles = roles;
+  }
 }

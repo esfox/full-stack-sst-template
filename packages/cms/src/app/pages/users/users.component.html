@@ -38,7 +38,7 @@
 </app-main-layout>
 
 <app-dialog #recordFormDialog [title]="recordFormDialogTitle()">
-  <app-user-form #recordForm [loading]="isSaving()" (save)="saveRecord($event)" />
+  <app-user-form #recordForm [loading]="isSavingWithRoles()" (save)="saveWithRoles($event)" />
 </app-dialog>
 
 <app-prompt-dialog

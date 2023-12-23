@@ -1,13 +1,20 @@
-import { Injectable, signal } from '@angular/core';
-import { UserType } from '../types';
-import { ApiService, RecordResponse } from './api.service';
+import { Injectable, inject, signal } from '@angular/core';
+import { RoleType, UserType } from '../types';
+import { ApiService, RecordResponse, RecordsResponse } from './api.service';
+import { RolesService } from './roles.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService extends ApiService<UserType> {
+  private rolesService = inject(RolesService);
+
   currentUser = signal<UserType | undefined>(undefined);
   isLoadingCurrentUser = signal(false);
+
+  userRolesMap: { [userId: string]: RoleType[] } = {};
+
+  isSavingWithRoles = signal(false);
 
   constructor() {
     super({
@@ -27,6 +34,10 @@ export class UsersService extends ApiService<UserType> {
     });
   }
 
+  private getUserRolesUrl(userId: string) {
+    return `${this.url}/${userId}/roles`;
+  }
+
   async getCurrentUser() {
     this.isLoadingCurrentUser.set(true);
 
@@ -40,5 +51,52 @@ export class UsersService extends ApiService<UserType> {
       //  TODO: handle error
       console.error(error);
     }
+  }
+
+  async getRoles(userId: string) {
+    let roles = this.userRolesMap[userId];
+    if (roles) {
+      return roles;
+    }
+
+    let roleRecords;
+    try {
+      const response = await this.fetch(this.getUserRolesUrl(userId));
+      const { records }: RecordsResponse = await response.json();
+      roleRecords = records;
+    } catch (error) {
+      // TODO: handle error
+    }
+
+    if (!roleRecords) {
+      return;
+    }
+
+    roles = roleRecords.map(record => this.rolesService.mapFromApi(record));
+    if (!this.userRolesMap[userId]) {
+      this.userRolesMap[userId] = roles;
+    }
+
+    return roles;
+  }
+
+  async saveWithRoles(data: { user: Partial<UserType>; roles: RoleType[]; userId?: string }) {
+    const { user, roles, userId } = data;
+
+    this.isSavingWithRoles.set(true);
+
+    let savedUser;
+    if (userId) {
+      savedUser = await this.edit(userId, user);
+    } else {
+      savedUser = await this.create(user);
+    }
+
+    const savedUserId = savedUser.id;
+    const roleIds = roles.map(role => role.id);
+    await this.fetchWithBody(this.getUserRolesUrl(savedUserId), 'PUT', roleIds);
+
+    this.isSavingWithRoles.set(false);
+    delete this.userRolesMap[savedUserId];
   }
 }
