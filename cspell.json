@@ -12,7 +12,9 @@
     "fontawesome",
     "setenv",
     "oidc",
-    "tokenset"
+    "tokenset",
+    "titleize",
+    "titleized"
   ],
   "ignorePaths": [
     "node_modules/",

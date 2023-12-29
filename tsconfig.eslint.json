@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
   "exclude": ["api/sst-env.d.ts"],
-  "include": ["stacks/**/*.ts", "migrations", "api/**/*.ts"]
+  "include": ["stacks/**/*.ts", "migrations", "api/**/*.ts", "scripts/**/*.ts"]
 }
