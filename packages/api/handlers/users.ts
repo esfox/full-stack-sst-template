@@ -3,6 +3,7 @@ import { DatabaseError } from 'pg';
 import { useSession } from 'sst/node/auth';
 import { z } from 'zod';
 import { PostgresErrorCode, UserSessionField } from '../constants';
+import { Permission } from '../constants/permissions';
 import { UserField } from '../database/constants';
 import { createHandler } from '../helpers/handler.helper';
 import { usersRolesService } from '../services/users-roles.service';
@@ -16,8 +17,8 @@ import {
   createPostHandler,
 } from './common';
 
-export const list = createListHandler(usersService);
-export const get = createGetHandler(usersService);
+export const list = createListHandler(usersService, Permission.ReadUsers);
+export const get = createGetHandler(usersService, Permission.ReadUsers);
 export const post = createPostHandler(
   usersService,
   z.object({
@@ -25,7 +26,8 @@ export const post = createPostHandler(
     [UserField.Username]: z.string().trim().optional(),
     [UserField.FirstName]: z.string().trim().optional(),
     [UserField.LastName]: z.string().trim().optional(),
-  })
+  }),
+  Permission.AddUsers
 );
 export const patch = createPatchHandler(
   usersService,
@@ -34,10 +36,11 @@ export const patch = createPatchHandler(
     [UserField.Username]: z.string().trim().optional(),
     [UserField.FirstName]: z.string().trim().optional(),
     [UserField.LastName]: z.string().trim().optional(),
-  })
+  }),
+  Permission.EditUsers
 );
-export const destroy = createDestroyHandler(usersService);
-export const archive = createArchiveHandler(usersService);
+export const destroy = createDestroyHandler(usersService, Permission.DeleteUsers);
+export const archive = createArchiveHandler(usersService, Permission.DeleteUsers);
 
 export const me = createHandler({
   handler: async () => {
@@ -58,6 +61,7 @@ export const me = createHandler({
 });
 
 export const getRoles = createHandler({
+  requiredPermission: Permission.ReadUsers,
   validationSchema: {
     pathParameters: z.object({ id: z.string().uuid() }),
   },
@@ -73,6 +77,7 @@ export const getRoles = createHandler({
 });
 
 export const setRoles = createHandler({
+  requiredPermission: Permission.EditUsers,
   validationSchema: {
     pathParameters: z.object({ id: z.string().uuid() }),
     body: z.string().uuid().array(),

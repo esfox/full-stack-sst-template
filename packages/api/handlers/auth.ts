@@ -43,7 +43,7 @@ export const handler = AuthHandler({
           userId = existingUser[UserField.Id];
         }
 
-        // TODO: Check roles and permissions
+        // TODO: Assign default role
 
         return Session.cookie({
           redirect: Config.CMS_URL,

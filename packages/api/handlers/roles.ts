@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 import { PostgresErrorCode } from '../constants';
+import { Permission } from '../constants/permissions';
 import { RoleField } from '../database/constants';
 import { createHandler } from '../helpers/handler.helper';
 import { rolesPermissionsService } from '../services/roles-permissions.service';
@@ -15,24 +16,27 @@ import {
   createPostHandler,
 } from './common';
 
-export const list = createListHandler(rolesService);
-export const get = createGetHandler(rolesService);
+export const list = createListHandler(rolesService, Permission.ReadRoles);
+export const get = createGetHandler(rolesService, Permission.ReadRoles);
 export const post = createPostHandler(
   rolesService,
   z.object({
     [RoleField.Name]: z.string().trim(),
-  })
+  }),
+  Permission.AddRoles
 );
 export const patch = createPatchHandler(
   rolesService,
   z.object({
     [RoleField.Name]: z.string().trim().optional(),
-  })
+  }),
+  Permission.EditRoles
 );
-export const destroy = createDestroyHandler(rolesService);
-export const archive = createArchiveHandler(rolesService);
+export const destroy = createDestroyHandler(rolesService, Permission.DeleteRoles);
+export const archive = createArchiveHandler(rolesService, Permission.DeleteRoles);
 
 export const getPermissions = createHandler({
+  requiredPermission: Permission.ReadRoles,
   validationSchema: {
     pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
   },
@@ -48,6 +52,7 @@ export const getPermissions = createHandler({
 });
 
 export const setPermissions = createHandler({
+  requiredPermission: Permission.EditRoles,
   validationSchema: {
     pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
     body: z.string().uuid().array(),
@@ -81,6 +86,7 @@ export const setPermissions = createHandler({
 });
 
 export const removePermissions = createHandler({
+  requiredPermission: Permission.EditRoles,
   validationSchema: {
     pathParameters: z.object({ [RoleField.Id]: z.string().uuid() }),
     queryStringParameters: z.object({

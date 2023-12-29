@@ -1,5 +1,11 @@
 import { Transaction } from 'kysely';
-import { RoleField, TableName, UserRoleField } from '../database/constants';
+import {
+  PermissionField,
+  RoleField,
+  RolePermissionField,
+  TableName,
+  UserRoleField,
+} from '../database/constants';
 import { Database, type UsersRoles } from '../database/schema';
 import { SqlService } from '../services/sql.service';
 
@@ -32,6 +38,28 @@ export class UsersRolesService extends SqlService<UsersRoles> {
 
   getUserRoles(userId: string) {
     return this.getUserRolesQuery(userId).execute();
+  }
+
+  getUserPermissions(userId: string) {
+    let query = this.database
+      .selectFrom(TableName.UsersRoles)
+      .leftJoin(
+        TableName.RolesPermissions,
+        `${TableName.RolesPermissions}.${RolePermissionField.RoleId}`,
+        `${TableName.UsersRoles}.${UserRoleField.RoleId}`
+      )
+      .leftJoin(
+        TableName.Permissions,
+        `${TableName.Permissions}.${PermissionField.Id}`,
+        `${TableName.RolesPermissions}.${RolePermissionField.PermissionId}`
+      )
+      .selectAll(TableName.Permissions)
+      .where(UserRoleField.UserId, '=', userId)
+      .distinctOn(RolePermissionField.PermissionId);
+
+    query = this.withoutSoftDeletes(query);
+
+    return query.execute();
   }
 
   async setUserRoles(userId: string, roleIds: string[]) {

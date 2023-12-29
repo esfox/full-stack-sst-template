@@ -7,6 +7,8 @@ import { ApiHandler } from 'sst/node/api';
 import { useSession } from 'sst/node/auth';
 import { z, type ZodSchema } from 'zod';
 import { UserSessionField } from '../constants';
+import { usersRolesService } from '../services/users-roles.service';
+import { PermissionField } from '../database/constants';
 
 const commonHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,6 +26,8 @@ type HandlerEvent<B, Q, H, P> = Omit<
   queryStringParameters: Q;
 };
 
+type Handler<B, Q, H, P> = (event: HandlerEvent<B, Q, H, P>) => Promise<ApiResponse>;
+
 type CreateHandlerParams<B, Q, H, P> = {
   validationSchema?: {
     body?: ZodSchema<B>;
@@ -34,6 +38,7 @@ type CreateHandlerParams<B, Q, H, P> = {
   handler: (event: HandlerEvent<B, Q, H, P>) => Promise<ApiResponse>;
   serializeBody?: boolean;
   needsAuthorization?: boolean;
+  requiredPermission?: string;
 };
 
 type ApiResponse = Omit<APIGatewayProxyStructuredResultV2, 'body'> & {
@@ -44,7 +49,8 @@ export function createHandler<B, Q, H, P>({
   validationSchema,
   handler,
   serializeBody = true,
-  needsAuthorization: needAuthentication = true,
+  needsAuthorization = true,
+  requiredPermission,
 }: CreateHandlerParams<B, Q, H, P>) {
   const before: middy.MiddlewareFn<APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2> = ({
     event,
@@ -115,29 +121,54 @@ export function createHandler<B, Q, H, P>({
   };
 
   let newHandler = handler;
-  if (needAuthentication) {
+  if (needsAuthorization) {
     // @ts-ignore we need to keep the typing of `handler` while still being able to wrap it in `ApiHandler`
-    newHandler = ApiHandler(async event => {
-      let authorized = false;
-      try {
-        const session = useSession();
-        const isUserSession = session.type === 'user';
-        const hasUserId = UserSessionField.UserId in session.properties;
-        authorized = isUserSession && hasUserId;
-      } catch (error) {
-        /* handle error */
-        console.error(error);
-      }
-
-      if (!authorized) {
-        return { statusCode: StatusCodes.UNAUTHORIZED };
-      }
-
-      return handler(event as HandlerEvent<B, Q, H, P>);
-    });
+    newHandler = getAuthorizedHandler(handler, requiredPermission);
   }
 
   return middy(newHandler)
     .use(bodyParser({ disableContentTypeError: true }))
     .use({ before, after });
+}
+
+function getAuthorizedHandler<B, Q, H, P>(
+  handler: Handler<B, Q, H, P>,
+  requiredPermission?: string
+) {
+  // @ts-ignore we need to keep the typing of `handler` while still being able to wrap it in `ApiHandler`
+  const newHandler = ApiHandler(async event => {
+    let session;
+    try {
+      session = useSession();
+    } catch (error) {
+      /* handle error */
+      console.error(error);
+    }
+
+    if (!session) {
+      return { statusCode: StatusCodes.UNAUTHORIZED };
+    }
+
+    const isUserSession = session.type === 'user';
+    let userId;
+    if (isUserSession && UserSessionField.UserId in session.properties) {
+      userId = session.properties.userId;
+    } else {
+      return { statusCode: StatusCodes.UNAUTHORIZED };
+    }
+
+    if (!requiredPermission) {
+      return handler(event as HandlerEvent<B, Q, H, P>);
+    }
+
+    const permissions = await usersRolesService.getUserPermissions(userId);
+    const permissionIds = permissions.map(permission => permission[PermissionField.Id]);
+    if (!permissionIds.includes(requiredPermission)) {
+      return { statusCode: StatusCodes.FORBIDDEN };
+    }
+
+    return handler(event as HandlerEvent<B, Q, H, P>);
+  });
+
+  return newHandler;
 }

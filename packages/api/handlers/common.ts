@@ -3,17 +3,19 @@ import { ZodSchema, z } from 'zod';
 import { createHandler } from '../helpers/handler.helper';
 import { SqlService } from '../services/sql.service';
 
-export const createListHandler = (service: SqlService) =>
+export const createListHandler = (service: SqlService, requiredPermission?: string) =>
   createHandler({
+    requiredPermission,
     handler: async () => {
       const { records, totalRecords } = await service.findAll();
       return { statusCode: StatusCodes.OK, body: { records, totalRecords } };
     },
   });
 
-export const createGetHandler = (service: SqlService) =>
+export const createGetHandler = (service: SqlService, requiredPermission?: string) =>
   createHandler({
     validationSchema: { pathParameters: z.object({ id: z.string().uuid() }) },
+    requiredPermission,
     handler: async ({ pathParameters }) => {
       const id = pathParameters.id;
       const record = await service.findOne({ id });
@@ -21,11 +23,16 @@ export const createGetHandler = (service: SqlService) =>
     },
   });
 
-export const createPostHandler = (service: SqlService, bodyValidationSchema: ZodSchema) =>
+export const createPostHandler = (
+  service: SqlService,
+  bodyValidationSchema: ZodSchema,
+  requiredPermission?: string
+) =>
   createHandler({
     validationSchema: {
       body: bodyValidationSchema,
     },
+    requiredPermission,
     handler: async ({ body }) => {
       const record = await service.create({ data: body });
 
@@ -36,12 +43,17 @@ export const createPostHandler = (service: SqlService, bodyValidationSchema: Zod
     },
   });
 
-export const createPatchHandler = (service: SqlService, bodyValidationSchema: ZodSchema) =>
+export const createPatchHandler = (
+  service: SqlService,
+  bodyValidationSchema: ZodSchema,
+  requiredPermission?: string
+) =>
   createHandler({
     validationSchema: {
       body: bodyValidationSchema,
       pathParameters: z.object({ id: z.string().uuid() }),
     },
+    requiredPermission,
     handler: async ({ body, pathParameters }) => {
       const id = pathParameters.id;
       const record = await service.update({ id, data: body });
@@ -53,11 +65,12 @@ export const createPatchHandler = (service: SqlService, bodyValidationSchema: Zo
     },
   });
 
-export const createDestroyHandler = (service: SqlService) =>
+export const createDestroyHandler = (service: SqlService, requiredPermission?: string) =>
   createHandler({
     validationSchema: {
       pathParameters: z.object({ id: z.string().uuid() }),
     },
+    requiredPermission,
     handler: async ({ pathParameters }) => {
       const id = pathParameters.id;
       const record = await service.delete({ id });
@@ -69,11 +82,12 @@ export const createDestroyHandler = (service: SqlService) =>
     },
   });
 
-export const createArchiveHandler = (service: SqlService) =>
+export const createArchiveHandler = (service: SqlService, requiredPermission?: string) =>
   createHandler({
     validationSchema: {
       pathParameters: z.object({ id: z.string().uuid() }),
     },
+    requiredPermission,
     handler: async ({ pathParameters }) => {
       const id = pathParameters.id;
       const record = await service.delete({ id, softDelete: true });
