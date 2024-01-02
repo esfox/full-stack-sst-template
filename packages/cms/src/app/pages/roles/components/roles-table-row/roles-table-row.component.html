@@ -56,7 +56,7 @@
                 } @else if (rolePermissions?.length === 0) {
                   -
                 } @else if (rolePermissions) {
-                  <ul class="flex gap-2">
+                  <ul class="flex flex-wrap gap-2">
                     @for (permission of rolePermissions; track $index) {
                       <li class="bg-base-200 px-3 py-2 rounded-lg">{{ permission.name }}</li>
                     }
