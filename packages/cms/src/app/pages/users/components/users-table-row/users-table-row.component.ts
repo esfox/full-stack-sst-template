@@ -28,7 +28,7 @@ export class UsersTableRowComponent extends BaseDataTableRowComponent {
     }
 
     this.isLoadingRoles = true;
-    const roles = await this.usersService.getRoles(this.user.id);
+    const { data: roles } = await this.usersService.getRoles(this.user.id);
     this.isLoadingRoles = false;
     if (!roles) {
       return;

@@ -29,6 +29,10 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    await this.usersService.getCurrentUser();
+    const { error } = await this.usersService.getCurrentUser();
+    if (error) {
+      // TODO: handle error
+      return;
+    }
   }
 }

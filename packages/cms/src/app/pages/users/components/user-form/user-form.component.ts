@@ -1,56 +1,75 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BaseFormComponent } from '../../../../components/base-form/base-form.component';
+import {
+  BaseFormComponent,
+  injectionTokens,
+} from '../../../../components/base-form/base-form.component';
+import { NavbarComponent } from '../../../../components/navbar/navbar.component';
 import { RolesService } from '../../../../services/roles.service';
 import { UsersService } from '../../../../services/users.service';
-import { RoleType } from '../../../../types';
+import { RoleType, UserType } from '../../../../types';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, NavbarComponent, FormsModule],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
+  providers: [{ provide: injectionTokens.service, useExisting: UsersService }],
 })
-export class UserFormComponent extends BaseFormComponent {
+export class UserFormComponent extends BaseFormComponent<UserType> {
   rolesService = inject(RolesService);
   usersService = inject(UsersService);
 
-  isLoadingRoleOptions = this.rolesService.isLoading;
-  isLoadingRoles = false;
+  isLoadingRoleOptions = this.rolesService.isLoadingRecords;
+  isLoadingRoles = this.usersService.isLoadingRoles;
   selectedRoles: RoleType[] = [];
 
-  override save() {
-    this.onSave.emit({ user: this.form.value, roles: Array.from(this.selectedRoles) });
-  }
+  override isSaving = this.usersService.isSavingWithRoles;
 
-  override reset() {
-    super.reset();
-    this.selectedRoles = [];
-  }
+  override async setValues() {
+    super.setValues();
 
-  override async setValues(role: Partial<RoleType>) {
-    this.selectedRoles = [];
-    super.setValues(role);
-
-    if (!role || !role.id) {
+    const user = this.recordToEdit();
+    if (!user || !user.id) {
       return;
     }
 
-    this.isLoadingRoles = true;
-    const roles = await this.usersService.getRoles(role.id);
-    this.isLoadingRoles = false;
-    if (!roles) {
+    this.selectedRoles = [];
+
+    const { data } = await this.usersService.getRoles(user.id);
+    if (!data) {
       return;
     }
 
-    this.selectedRoles = [...roles];
+    this.selectedRoles = [...data];
+  }
+
+  override async save() {
+    const { error } = await this.usersService.saveWithRoles({
+      user: this.form.value,
+      roles: Array.from(this.selectedRoles),
+    });
+
+    if (!error) {
+      this.location.back();
+      await this.service.loadRecords();
+    }
+
+    if (error?.status === 403) {
+      this.error = 'Not allowed to save';
+    }
   }
 
   getRoleOptions() {
+    const roles = this.rolesService.records();
+    if (!roles) {
+      return [];
+    }
+
     const roleOptions = [];
-    for (const role of this.rolesService.records()) {
+    for (const role of roles) {
       if (!this.selectedRoles.some(selected => selected.id === role.id)) {
         roleOptions.push(role);
       }
