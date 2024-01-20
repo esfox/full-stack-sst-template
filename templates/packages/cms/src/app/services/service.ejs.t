@@ -8,13 +8,14 @@ to: packages/cms/src/app/services/<%= h.inflection.dasherize(tableName) %>.servi
 import { Injectable } from '@angular/core';
 import { <%= pascalizedSingularName %>Type } from '../types';
 import { ApiService } from './api.service';
+import { ResourceService } from './resource.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class <%= pascalizedName %>Service extends ApiService<<%= pascalizedSingularName %>Type> {
+export class <%= pascalizedName %>Service extends ResourceService<<%= pascalizedSingularName %>Type> {
   constructor() {
-    super({
+    const apiService = new ApiService<<%= pascalizedSingularName %>Type>({
       basePath: '/<%= dasherizedName %>',
       dataMapping: [
         <% for (const column of columns) { %>
@@ -22,5 +23,7 @@ export class <%= pascalizedName %>Service extends ApiService<<%= pascalizedSingu
         <% } %>
       ],
     });
+
+    super(apiService);
   }
 }
