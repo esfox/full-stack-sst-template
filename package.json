@@ -1,8 +1,8 @@
 {
-  "name": "full-stack-sst-starter",
+  "name": "full-stack-sst-template",
   "version": "0.0.1",
   "type": "module",
-  "description": "Full-stack application starter with a CMS using SST",
+  "description": "Full-stack application template with a CMS using SST",
   "author": "osairis100@gmail.com",
   "license": "MIT",
   "scripts": {
